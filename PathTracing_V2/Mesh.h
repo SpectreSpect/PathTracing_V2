@@ -7,7 +7,9 @@ class Mesh
 {
 public:
 	Mesh(void* pVertices, const size_t verticesWidth, const UINT verticesCount, void* pIndeces, size_t indecesWidth, UINT indecesCount);
+	Mesh(std::vector<Vertex> vertices, std::vector<UINT> indices);
 	void LoadData(void* pVertices, const size_t verticesWidth, const UINT verticesCount, void* pIndeces, size_t indecesWidth, UINT indecesCount);
+	void LoadData(std::vector<Vertex> vertices, std::vector<UINT> indices);
 	VertexBuffer vertexBuffer;
 	IndexBuffer indexBuffer;
 };

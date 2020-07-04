@@ -45,5 +45,23 @@ Mesh D3D11Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 		offset = face.mNumIndices * (i + 1);
 	}
 	return Mesh(vertices, sizeof(Vector3) * mesh->mNumVertices, mesh->mNumVertices, indices, sizeof(UINT) * (size_t)mesh->mNumFaces * 3, (size_t)mesh->mNumFaces * 3);
+
+	//std::vector<Vertex> vertices;
+	//std::vector<UINT> indices;
+	//for (unsigned int i = 0; i < mesh->mNumVertices; i++)
+	//{
+	//	Vertex vertex;
+	//	vertex.pos.x = mesh->mVertices[i].x;
+	//	vertex.pos.y = mesh->mVertices[i].y;
+	//	vertex.pos.z = mesh->mVertices[i].z;
+	//	vertices.push_back(vertex);
+	//}
+	//for (int i = 0; i < mesh->mNumFaces; i++)
+	//{
+	//	aiFace face = mesh->mFaces[i];
+	//	for (int c = 0; c < face.mNumIndices; c++)
+	//		indices.push_back(face.mIndices[c]);
+	//}
+	//return Mesh(vertices, indices);
 }
 

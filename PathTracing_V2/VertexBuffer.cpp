@@ -8,7 +8,7 @@ VertexBuffer::VertexBuffer()
 
 VertexBuffer::VertexBuffer(void* pSysMem, UINT ByteWidth, UINT verticesCount, D3D11_USAGE Usage, UINT CPUAccessFlags)
 {
-	LoadData(pSysMem, ByteWidth, verticesCount, Usage, CPUAccessFlags);
+	Init(pSysMem, ByteWidth, verticesCount, Usage, CPUAccessFlags);
 }
 
 VertexBuffer::~VertexBuffer()
@@ -22,7 +22,7 @@ void VertexBuffer::Release()
 		pVertexBuffer->Release();
 }
 
-void VertexBuffer::LoadData(void* pSysMem, UINT ByteWidth, UINT verticesCount, D3D11_USAGE Usage, UINT CPUAccessFlags)
+void VertexBuffer::Init(void* pSysMem, UINT ByteWidth, UINT verticesCount, D3D11_USAGE Usage, UINT CPUAccessFlags)
 {
 	Release();
 	this->verticesCount = verticesCount;
@@ -38,8 +38,10 @@ void VertexBuffer::LoadData(void* pSysMem, UINT ByteWidth, UINT verticesCount, D
 	if (FAILED(hr))
 		MessageBox(nullptr, L"LoadData() failed", L"VertexBuffer", MB_ICONERROR);
 }
-
-void VertexBuffer::Set(Shader* shader, UINT StartSlot, UINT NumBuffers)
+void VertexBuffer::UpLoadData(ID3D11DeviceContext* deviceCon, const void* pData, const size_t dataWidth)
 {
-	DX::deviceCon->IASetVertexBuffers(StartSlot, NumBuffers, &pVertexBuffer, &shader->vertexSize, &shader->offset);
+	D3D11_MAPPED_SUBRESOURCE mappedSub{};
+	HRESULT hr = deviceCon->Map(pVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSub);
+	memcpy(mappedSub.pData, pData, dataWidth);
+	deviceCon->Unmap(pVertexBuffer, 0);
 }
