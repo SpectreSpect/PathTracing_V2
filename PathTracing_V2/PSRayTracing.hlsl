@@ -579,7 +579,7 @@ Hit Trace(Ray ray, inout float seed, float iter)
 	Hit hit = InitHit();
 	IntersectSphere(ray, hit, float3(-7, 5, 0), 3, 0, float3(2, 2, 2), 0, 0);
 	IntersectSphere(ray, hit, float3(2.5f, 1, -1), 0.5f, 0, float3(3, 2, 1), 0, 0);
-	//IntersectMesh(ray, hit, 0);
+	IntersectMesh(ray, hit, 0);
 	float3 pos = float3(0, 0.1f, 0);
 	float3 cubeSize = float3(1, 0.9f, 1.2f) * 1.5f;
 	//IntersectPrisma(ray, hit, pos, cubeSize, 0.8f, 0, 0, 0, float4(1, 1, 1, 1.5f));
