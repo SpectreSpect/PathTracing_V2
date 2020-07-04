@@ -55,88 +55,19 @@ RayTracing::~RayTracing()
 void RayTracing::InitStructuredBuffer()
 {
 	const unsigned int MeshObjectsCount = 1;
-	const unsigned int veticesCount = figure->meshes[0].vertexBuffer.verticesCount;
-	const unsigned int indicesCount = figure->meshes[0].indexBuffer.indecesCount;
-	//const unsigned int veticesCount = 4;
-	//const unsigned int indicesCount = 6;
-	Vector3 k1 = *(Vector3*)(figure->meshes[0].vertexBuffer.pSysMem);
-	Vector3 k2 = *(Vector3*)((size_t)figure->meshes[0].vertexBuffer.pSysMem + sizeof(Vector3));
-	Vector3 k3 = *(Vector3*)((size_t)figure->meshes[0].vertexBuffer.pSysMem + sizeof(Vector3) * 2);
-	Vector3 k4 = *(Vector3*)((size_t)figure->meshes[0].vertexBuffer.pSysMem + sizeof(Vector3) * 3);
-	//float k2 = *(float*)((size_t)figure->meshes[0].vertexBuffer.pSysMem + sizeof(float));
-	//float k3 = *(float*)((size_t)figure->meshes[0].vertexBuffer.pSysMem + sizeof(float) * 2);
-
-	//float k4 = *(float*)((size_t)figure->meshes[0].vertexBuffer.pSysMem + sizeof(float) * 3);
-	//float k5 = *(float*)((size_t)figure->meshes[0].vertexBuffer.pSysMem + sizeof(float) * 4);
-	//float k6 = *(float*)((size_t)figure->meshes[0].vertexBuffer.pSysMem + sizeof(float) * 5);
-
-	//float k7 = *(float*)((size_t)figure->meshes[0].vertexBuffer.pSysMem + sizeof(float) * 6);
-	//float k8 = *(float*)((size_t)figure->meshes[0].vertexBuffer.pSysMem + sizeof(float) * 7);
-	//float k9 = *(float*)((size_t)figure->meshes[0].vertexBuffer.pSysMem + sizeof(float) * 8);
-
-	
-	size_t vertexSize = sizeof(Vertex);
-
 	MeshObj meshObjects[MeshObjectsCount]
-	{ 0, indicesCount };
+	{ 0, figure->meshes[0].indexBuffer.indecesCount };
+	HCheck(meshes.InitSBuffer(DX::device, sizeof(MeshObj), sizeof(MeshObj) * MeshObjectsCount), L"meshes.InitSBuffer() was failed", L"RayTracing");
+	HCheck(vertices.InitSBuffer(DX::device, sizeof(Vertex), sizeof(Vertex) * figure->meshes[0].vertexBuffer.verticesCount),L"vertices.InitSBuffer() was failed", L"RayTracing" );
+	HCheck(indices.InitSBuffer(DX::device, sizeof(int), sizeof(int) * figure->meshes[0].indexBuffer.indecesCount), L"indices.InitSBuffer() was failed", L"RayTracing");
 
-	void* vertices = figure->meshes[0].vertexBuffer.pSysMem;
-	void* indices = figure->meshes[0].indexBuffer.pSysMem;
-	//Vertex vertices[veticesCount]{
-	//{0, 0, 0},
-	//{1, 0, 0},
-	//{0, 1, 0},
-	//{1, 1, 0}
-	//};
-	//int indices[indicesCount]{
-	//0, 1, 2,
-	//3, 1, 2
-	//};
+	HCheck(meshes.UploadData(DX::deviceCon, meshObjects, sizeof(MeshObj) * MeshObjectsCount), L"meshes.UploadData() was failed", L"RayTracing");
+	HCheck(vertices.UploadData(DX::deviceCon, figure->meshes[0].vertexBuffer.pSysMem, sizeof(Vertex) * figure->meshes[0].vertexBuffer.verticesCount), L"vertices.UploadData was failed", L"RayTracing");
+	HCheck(indices.UploadData(DX::deviceCon, figure->meshes[0].indexBuffer.pSysMem, sizeof(int) * figure->meshes[0].indexBuffer.indecesCount), L"indices.UploadData() was failed", L"RayTracing");
 
-	D3D11_BUFFER_DESC sbDesc;
-	sbDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	sbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	sbDesc.Usage = D3D11_USAGE_DYNAMIC;
-	sbDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-	sbDesc.StructureByteStride = sizeof(MeshObj);
-	sbDesc.ByteWidth = sizeof(MeshObj) * MeshObjectsCount;
-	DX::device->CreateBuffer(&sbDesc, 0, &sbMeshes);
-
-	sbDesc.StructureByteStride = sizeof(Vertex);
-	sbDesc.ByteWidth = sizeof(Vertex) * veticesCount;
-	DX::device->CreateBuffer(&sbDesc, 0, &sbVertices);
-
-	sbDesc.StructureByteStride = sizeof(int);
-	sbDesc.ByteWidth = sizeof(int) * indicesCount;
-	DX::device->CreateBuffer(&sbDesc, 0, &sbIndices);
-
-	D3D11_MAPPED_SUBRESOURCE mappedSub{};
-	DX::deviceCon->Map(sbMeshes, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSub);
-	memcpy(mappedSub.pData, meshObjects, sizeof(MeshObj) * MeshObjectsCount);
-	DX::deviceCon->Unmap(sbMeshes, 0);
-
-	DX::deviceCon->Map(sbVertices, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSub);
-	memcpy(mappedSub.pData, vertices, sizeof(Vertex) * veticesCount);
-	DX::deviceCon->Unmap(sbVertices, 0);
-
-	DX::deviceCon->Map(sbIndices, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSub);
-	memcpy(mappedSub.pData, indices, sizeof(int) * indicesCount);
-	DX::deviceCon->Unmap(sbIndices, 0);
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
-	shaderResourceViewDesc.Format = DXGI_FORMAT_UNKNOWN;
-	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-	shaderResourceViewDesc.Buffer.ElementOffset = 0;
-	shaderResourceViewDesc.Buffer.ElementWidth = sizeof(MeshObj);
-	shaderResourceViewDesc.Buffer.FirstElement = 0;
-	shaderResourceViewDesc.Buffer.NumElements = MeshObjectsCount;
-	DX::device->CreateShaderResourceView(sbMeshes, &shaderResourceViewDesc, &srMeshes);
-	shaderResourceViewDesc.Buffer.ElementWidth = sizeof(Vertex);
-	shaderResourceViewDesc.Buffer.NumElements = veticesCount;
-	DX::device->CreateShaderResourceView(sbVertices, &shaderResourceViewDesc, &srVertices);
-	shaderResourceViewDesc.Buffer.ElementWidth = sizeof(int);
-	shaderResourceViewDesc.Buffer.NumElements = indicesCount;
-	DX::device->CreateShaderResourceView(sbIndices, &shaderResourceViewDesc, &srIndices);
+	HCheck(meshes.InitSBShaderResource(DX::device, sizeof(MeshObj), MeshObjectsCount), L"meshes.InitSBShaderResource() was failed", L"RayTracing");
+	HCheck(vertices.InitSBShaderResource(DX::device, sizeof(Vertex), figure->meshes[0].vertexBuffer.verticesCount), L"vertices.InitSBShaderResource() was failed", L"RayTracing");
+	HCheck(indices.InitSBShaderResource(DX::device, sizeof(int), figure->meshes[0].indexBuffer.indecesCount), L"indices.InitSBShaderResource() was failed", L"RayTracing");
 }
 void RayTracing::InitModels()
 {
@@ -429,9 +360,10 @@ void RayTracing::Draw()
 		UINT initCount = -1;
 		DX::deviceCon->PSSetShaderResources(0, 1, &shaderResourceView[!textureQueue]);
 		//DX::deviceCon->CSSetUnorderedAccessViews(0, 1, &pStructuredBufferUAV, &initCount);
-		DX::deviceCon->PSSetShaderResources(50, 1, &srMeshes);
-		DX::deviceCon->PSSetShaderResources(51, 1, &srVertices);
-		DX::deviceCon->PSSetShaderResources(52, 1, &srIndices);
+		//DX::deviceCon->PSSetShaderResources(50, 1, &srMeshes);
+		DX::deviceCon->PSSetShaderResources(50, 1, &meshes.pSBShaderResource);
+		DX::deviceCon->PSSetShaderResources(51, 1, &vertices.pSBShaderResource);
+		DX::deviceCon->PSSetShaderResources(52, 1, &indices.pSBShaderResource);
 		//UINT initilCount = 1;
 		//DX::deviceCon->OMSetRenderTargetsAndUnorderedAccessViews(0, nullptr, nullptr, 1, 1, &pStructuredBufferUAV, &initilCount);
 		//cModelBuffer->Set(1, 1);

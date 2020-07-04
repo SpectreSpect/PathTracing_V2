@@ -14,10 +14,12 @@
 #include "SamplerState.h"
 #include "ShaderResourceView.h"
 
+#define HCheck(HR, TEXT, CAPTION) if(FAILED(HR)){MessageBox(nullptr, TEXT, CAPTION, MB_ICONERROR);}
 #define PI 3.14159265358979
 class DX
 {
 public:
+
 	~DX();
 	bool Init(HWND OutputWindow, UINT backBufferWidth, UINT backBufferHeight);
 	static BOOL ApplicationRun;

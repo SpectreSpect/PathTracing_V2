@@ -3,6 +3,8 @@
 #include "ShaderRayTracing.h"
 #include "ShaderTexturing.h"
 #include "D3D11Model.h"
+#include "StructuredBuffer.h"
+#include "Vertex.h"
 class RayTracing : public Shape
 {
 public:
@@ -14,10 +16,6 @@ public:
 	{
 		float indexOffset;
 		float indecesCount;
-	};
-	struct Vertex
-	{
-		Vector3 pos;
 	};
 	//unsigned int MeshObjectsCount = 1;
 	//unsigned int veticesCount = 3;
@@ -35,12 +33,9 @@ public:
 	ID3D11RenderTargetView* textureRenderTarget[2]; // 2 рендер торгета для текстур, для того чтобы в них можно было рендерить
 	ID3D11ShaderResourceView* shaderResourceView[2]; // 2 шейдер ресурса, для того, чтобы их можно было использовать как ресурс в шейдере
 	ID3D11UnorderedAccessView* pStructuredBufferUAV;
-	ID3D11ShaderResourceView* srMeshes;
-	ID3D11ShaderResourceView* srVertices;
-	ID3D11ShaderResourceView* srIndices;
-	ID3D11Buffer* sbMeshes;
-	ID3D11Buffer* sbVertices;
-	ID3D11Buffer* sbIndices;
+	StructuredBuffer meshes;
+	StructuredBuffer vertices;
+	StructuredBuffer indices;
 	Shader* shaderRayTracing;
 	Shader* shaderTexturing;
 	BOOL textureQueue;

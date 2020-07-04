@@ -38,6 +38,7 @@
     <ClCompile Include="ShaderTexturing.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="StructuredBuffer.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -65,7 +66,9 @@
     <ClInclude Include="ShaderResourceView.h" />
     <ClInclude Include="ShaderTexturing.h" />
     <ClInclude Include="Shape.h" />
+    <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="Vector4.h" />
+    <ClInclude Include="Vertex.h" />
     <ClInclude Include="VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
