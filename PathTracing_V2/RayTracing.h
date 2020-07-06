@@ -5,6 +5,7 @@
 #include "D3D11Model.h"
 #include "StructuredBuffer.h"
 #include "Vertex.h"
+#include "Timer.h"
 class RayTracing : public Shape
 {
 public:
@@ -56,10 +57,10 @@ public:
 	Vector4 cyrcleVelocity[20];
 	FLOAT samplesAmount = 5000;
 	UINT timer;
-	float speed = 0.01f;
+	float speed = 0.006f;
 private:
+	Vector4 oldCameraPos;
 	void InitStructuredBuffer();
-	void InitModels();
 	void* cModelBufferData;
 	void InitShaderResource();
 	void CorrectScreenResolution();

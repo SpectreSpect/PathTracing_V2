@@ -28,13 +28,13 @@ void D3D11Model::ProcessNode(aiNode* node, const aiScene* scene)
 
 Mesh D3D11Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 {
-	Vector3* vertices = new Vector3[mesh->mNumVertices];
+	Vertex* vertices = new Vertex[mesh->mNumVertices];
 	UINT* indices = new UINT[(size_t)mesh->mNumFaces * 3];
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
-		vertices[i].x = mesh->mVertices[i].x;
-		vertices[i].y = mesh->mVertices[i].y;
-		vertices[i].z = mesh->mVertices[i].z;
+		vertices[i].pos.x = mesh->mVertices[i].x;
+		vertices[i].pos.y = mesh->mVertices[i].y;
+		vertices[i].pos.z = mesh->mVertices[i].z;
 	}
 	int offset = 0;
 	for ( int i = 0; i < mesh->mNumFaces; i++)
@@ -44,24 +44,7 @@ Mesh D3D11Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 			indices[c + offset] = face.mIndices[c];
 		offset = face.mNumIndices * (i + 1);
 	}
-	return Mesh(vertices, sizeof(Vector3) * mesh->mNumVertices, mesh->mNumVertices, indices, sizeof(UINT) * (size_t)mesh->mNumFaces * 3, (size_t)mesh->mNumFaces * 3);
+	return Mesh(vertices, sizeof(Vertex) * mesh->mNumVertices, mesh->mNumVertices, indices, sizeof(UINT) * (size_t)mesh->mNumFaces * 3, (size_t)mesh->mNumFaces * 3);
 
-	//std::vector<Vertex> vertices;
-	//std::vector<UINT> indices;
-	//for (unsigned int i = 0; i < mesh->mNumVertices; i++)
-	//{
-	//	Vertex vertex;
-	//	vertex.pos.x = mesh->mVertices[i].x;
-	//	vertex.pos.y = mesh->mVertices[i].y;
-	//	vertex.pos.z = mesh->mVertices[i].z;
-	//	vertices.push_back(vertex);
-	//}
-	//for (int i = 0; i < mesh->mNumFaces; i++)
-	//{
-	//	aiFace face = mesh->mFaces[i];
-	//	for (int c = 0; c < face.mNumIndices; c++)
-	//		indices.push_back(face.mIndices[c]);
-	//}
-	//return Mesh(vertices, indices);
 }
 

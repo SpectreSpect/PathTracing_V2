@@ -9,12 +9,12 @@
 
 #include <iostream>
 #include <sstream>
-
+#include "Timer.h"
 
 BOOL CheckMessage(MSG* msg)
 {
 
-	if (PeekMessage(msg, NULL, 0, 0, PM_REMOVE))
+	while (PeekMessage(msg, NULL, 0, 0, PM_REMOVE))
 	{
 		TranslateMessage(msg);
 		DispatchMessage(msg);
@@ -24,13 +24,13 @@ BOOL CheckMessage(MSG* msg)
 			return TRUE;
 		}
 		InputManager::HandleRawInputMessage(msg);
-
 	}
 }
 #define SCREEN_WIDTH 1920 
 #define SCREEN_HEIGHT 1080 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
+	Timer::Init();
 	MainWindow* win = new MainWindow();
 	win->Create(L"Window", WS_OVERLAPPEDWINDOW, NULL, NULL, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT);
 	DX* directX = new DX();
@@ -70,6 +70,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	//}
 	while (DX::ApplicationRun == TRUE)
 	{
+		Timer::deltaTime = Timer::GetMilisecondsElapsed();
+		Timer::Restart();
 		if (CheckMessage(&msg) == TRUE)
 			break;
 		GetWindowInfo(DX::currentWindow, &winInfo);

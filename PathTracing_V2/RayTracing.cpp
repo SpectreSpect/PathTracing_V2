@@ -31,9 +31,6 @@ RayTracing::RayTracing()
 }
 RayTracing::~RayTracing()
 {
-	//delete[MeshObjectsCount] meshObjects;
-	//delete[veticesCount] vetices;
-	//delete[indicesCount] indices;
 	delete figure;
 	delete cModelBufferData;
 	delete cModelBuffer;
@@ -41,7 +38,6 @@ RayTracing::~RayTracing()
 	delete HDRshaderResource;
 	for (int i = 0; i < 7; i++)
 		shaderResources[i]->Release();
-	//resource->Release();
 	blender->Release();
 	for (int i = 0; i < 2; i++)
 	{
@@ -68,36 +64,6 @@ void RayTracing::InitStructuredBuffer()
 	HCheck(meshes.InitSBShaderResource(DX::device, sizeof(MeshObj), MeshObjectsCount), L"meshes.InitSBShaderResource() was failed", L"RayTracing");
 	HCheck(vertices.InitSBShaderResource(DX::device, sizeof(Vertex), figure->meshes[0].vertexBuffer.verticesCount), L"vertices.InitSBShaderResource() was failed", L"RayTracing");
 	HCheck(indices.InitSBShaderResource(DX::device, sizeof(int), figure->meshes[0].indexBuffer.indecesCount), L"indices.InitSBShaderResource() was failed", L"RayTracing");
-}
-void RayTracing::InitModels()
-{
-	//meshObjects = new MeshObj[MeshObjectsCount]
-	//{
-	//	{1, 3}
-	//};
-	//vetices = new Vertex[veticesCount]
-	//{
-	//	{1, 1, 1},
-	//	{1, 1, 1},
-	//	{1, 1, 1}
-	//};
-	//indices = new int[indicesCount]
-	//{
-	//	1, 1, 2
-	//};
-
-	////unsigned int cModelBufferSize = sizeof(MeshObj) * MeshObjectsCount + sizeof(Vertex) * veticesCount + sizeof(int) * indicesCount;
-	//unsigned int cModelBufferSize = sizeof(float) * 3;
-	//cModelBufferData = malloc(cModelBufferSize);
-	//cModelBuffer = new ConstantBuffer(cModelBufferData, DX::multipleTo(cModelBufferSize, 16));
-	//float l[3]{1, 0.5f, 1};
-	//size_t lastSize;
-	//cModelBuffer->Map();
-	////lastSize = cModelBuffer->CopyMem(meshObjects, sizeof(MeshObj) * MeshObjectsCount);
-	////lastSize = cModelBuffer->CopyMem(vetices, sizeof(Vertex) * veticesCount, lastSize);
-	////lastSize = cModelBuffer->CopyMem(indices, sizeof(int) * indicesCount, lastSize);
-	//lastSize = cModelBuffer->CopyMem(&l, sizeof(float) * 3);
-	//cModelBuffer->UnMap();
 }
 void RayTracing::InitShaderResource()
 {
@@ -165,10 +131,7 @@ void RayTracing::setConstantData()
 void RayTracing::ClearFrame()
 {
 	if (currentCameraAngle.x != cameraAngle.x || currentCameraAngle.y != cameraAngle.y)
-	{
 		k.w = 1;
-	}
-	else k.w = 0;
 
 }
 
@@ -260,8 +223,8 @@ void RayTracing::HideOrShowCursor()
 	}
 	if (cursorInfo.flags == 0)
 	{
-		currentCameraAngle.x += InputManager::MouseX / 500;
-		currentCameraAngle.y -= InputManager::MouseY / 500;
+		currentCameraAngle.x += InputManager::MouseX * 0.0015f * Timer::deltaTime;
+		currentCameraAngle.y -= InputManager::MouseY * 0.0015f * Timer::deltaTime;
 	}
 	ClearFrame();
 	cameraAngle.x = currentCameraAngle.x;
@@ -281,44 +244,48 @@ void RayTracing::SetRandomValue()
 
 void RayTracing::Moving()
 {
-
+	float deltaSped = speed * Timer::deltaTime;
 	Vector4 forwardDiraction = GetCameraDiraction(Vector4{ 0, 0, 1, 0 }, Vector2{ 0, 0 });
 	Vector4 rightDiraction = GetCameraDiraction(Vector4{ 1, 0, 0, 0 }, Vector2{ 0, 0 });
 
 	if (GetAsyncKeyState('W'))
 	{
-		cameraPos.x += forwardDiraction.x * speed;
-		cameraPos.y += forwardDiraction.y * speed;
-		cameraPos.z += forwardDiraction.z * speed;
+		cameraPos.x += forwardDiraction.x * deltaSped;
+		cameraPos.y += forwardDiraction.y * deltaSped;
+		cameraPos.z += forwardDiraction.z * deltaSped;
 	}
 	else if (GetAsyncKeyState('S'))
 	{
-		cameraPos.x -= forwardDiraction.x * speed;
-		cameraPos.y -= forwardDiraction.y * speed;
-		cameraPos.z -= forwardDiraction.z * speed;
+		cameraPos.x -= forwardDiraction.x * deltaSped;
+		cameraPos.y -= forwardDiraction.y * deltaSped;
+		cameraPos.z -= forwardDiraction.z * deltaSped;
 	}
 
 	if (GetAsyncKeyState('A'))
 	{
-		cameraPos.x -= rightDiraction.x * speed;
-		cameraPos.y -= rightDiraction.y * speed;
-		cameraPos.z -= rightDiraction.z * speed;
+		cameraPos.x -= rightDiraction.x * deltaSped;
+		cameraPos.y -= rightDiraction.y * deltaSped;
+		cameraPos.z -= rightDiraction.z * deltaSped;
 	}
 	else if (GetAsyncKeyState('D'))
 	{
-		cameraPos.x += rightDiraction.x * speed;
-		cameraPos.y += rightDiraction.y * speed;
-		cameraPos.z += rightDiraction.z * speed;
+		cameraPos.x += rightDiraction.x * deltaSped;
+		cameraPos.y += rightDiraction.y * deltaSped;
+		cameraPos.z += rightDiraction.z * deltaSped;
 	}
 
 	if (GetAsyncKeyState(VK_LSHIFT))
 	{
-		cameraPos.y -= speed;
+		cameraPos.y -= deltaSped;
 	}
 	else if (GetAsyncKeyState(VK_SPACE))
 	{
-		cameraPos.y += speed;
+		cameraPos.y += deltaSped;
 	}
+	if (cameraPos.x != oldCameraPos.x || cameraPos.y != oldCameraPos.y || cameraPos.z != oldCameraPos.z)
+		k.w = 1;
+
+	oldCameraPos = cameraPos;
 }
 
 
@@ -334,42 +301,37 @@ Vector4 RayTracing::GetCameraDiraction(Vector4 vec1, Vector2 angleOffset)
 void RayTracing::Draw()
 {
 
-	for (int i = 0; i < 1; i++)
-	{
-		//circlePos.x = 0;
-		//circlePos.y = i / 20;
-		velocity.x = 1;
-		velocity.w = 1;
-		if (k.w == 1)
-			samplesCount.y = 0;
-		DX::deviceCon->OMSetRenderTargets(1, &textureRenderTarget[textureQueue], NULL); // Ставлю текстуру, под индексом 0 
-		// textureQueue - булевая переменная, textureQueue = FALSE равнасильно textureQueue = 0, поэтому выбирается текстура под индексом 0
-		samplesCount.x = samplesAmount;
-		samplesCount.y++;
+	velocity.x = 1;
+	velocity.w = 1;
+	if (k.w == 1)
+		samplesCount.y = 0;
+	DX::deviceCon->OMSetRenderTargets(1, &textureRenderTarget[textureQueue], NULL); // Ставлю текстуру, под индексом 0 
+	k.w = 0;
+	// textureQueue - булевая переменная, textureQueue = FALSE равнасильно textureQueue = 0, поэтому выбирается текстура под индексом 0
+	samplesCount.x = samplesAmount;
+	samplesCount.y++;
 
-		CorrectScreenResolution();
-		BindButtons();
-		HideOrShowCursor();
+	CorrectScreenResolution();
+	BindButtons();
+	HideOrShowCursor();
 
-		SetRandomValue();
-		Moving();
-		setConstantData();
-		samplerState->Set(0, 1);
-		SetTextures();
+	SetRandomValue();
+	Moving();
+	setConstantData();
+	samplerState->Set(0, 1);
+	SetTextures();
 
-		UINT initCount = -1;
-		DX::deviceCon->PSSetShaderResources(0, 1, &shaderResourceView[!textureQueue]);
-		//DX::deviceCon->CSSetUnorderedAccessViews(0, 1, &pStructuredBufferUAV, &initCount);
-		//DX::deviceCon->PSSetShaderResources(50, 1, &srMeshes);
-		DX::deviceCon->PSSetShaderResources(50, 1, &meshes.pSBShaderResource);
-		DX::deviceCon->PSSetShaderResources(51, 1, &vertices.pSBShaderResource);
-		DX::deviceCon->PSSetShaderResources(52, 1, &indices.pSBShaderResource);
-		//UINT initilCount = 1;
-		//DX::deviceCon->OMSetRenderTargetsAndUnorderedAccessViews(0, nullptr, nullptr, 1, 1, &pStructuredBufferUAV, &initilCount);
-		//cModelBuffer->Set(1, 1);
-		Shape::Draw(shaderRayTracing);
-	}
-
+	UINT initCount = -1;
+	DX::deviceCon->PSSetShaderResources(0, 1, &shaderResourceView[!textureQueue]);
+	//DX::deviceCon->CSSetUnorderedAccessViews(0, 1, &pStructuredBufferUAV, &initCount);
+	//DX::deviceCon->PSSetShaderResources(50, 1, &srMeshes);
+	DX::deviceCon->PSSetShaderResources(50, 1, &meshes.pSBShaderResource);
+	DX::deviceCon->PSSetShaderResources(51, 1, &vertices.pSBShaderResource);
+	DX::deviceCon->PSSetShaderResources(52, 1, &indices.pSBShaderResource);
+	//UINT initilCount = 1;
+	//DX::deviceCon->OMSetRenderTargetsAndUnorderedAccessViews(0, nullptr, nullptr, 1, 1, &pStructuredBufferUAV, &initilCount);
+	//cModelBuffer->Set(1, 1);
+	Shape::Draw(shaderRayTracing);
 	DX::deviceCon->OMSetRenderTargets(1, &DX::backRenderTargetView, NULL);
 	samplerState->Set(0, 1);
 	DX::deviceCon->PSSetShaderResources(0, 1, &shaderResourceView[textureQueue]);
