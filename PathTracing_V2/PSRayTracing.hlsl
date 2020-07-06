@@ -705,10 +705,15 @@ bool checkEqualsVolume(float3 checkedVolumeMin, float3 checkedVolumeMax, float3 
 
 bool splitedCubeIntersect(Ray ray, inout Hit bestHit, float3 checkedVolumeMin, float3 checkedVolumeMax, float3 volumeMin, float3 volumeMax, int extent)
 {
-	//if ()
-	//	IntersectCube(ray, bestHit, volumeMin, volumeMax / 2);
-	return false;
-}
+	bool intersect = IntersectCube(ray, bestHit, volumeMin, volumeMax, 0.8f);
+	int newExtent = extent - 1;
+	if (newExtent >= 0)
+	{
+		if (checkEqualsVolume(checkedVolumeMin, checkedVolumeMax, volumeMin, volumeMax / 2))
+			splitedCubeIntersect(ray, bestHit, checkedVolumeMin, checkedVolumeMax, volumeMin, volumeMax / 2, newExtent);
+	}
+		return false;
+	}
 
 bool BVHCheck(Ray ray, inout Hit bestHit, float3 checkedVolumeMin, float3 checkedVolumeMax, float3 firstVolumeSize)
 {
