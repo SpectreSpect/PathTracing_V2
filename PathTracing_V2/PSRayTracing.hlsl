@@ -24,11 +24,25 @@ cbuffer CBuffer : register(b0)
 	float4 velocity : VELOCITY;
 	float4 circlePos : CIRCLEPOS;
 };
+float3 Colorizate(float3 color)
+{
+	return (color.x / 255, color.y / 255, color.z / 255);
+}
+float3 Colorizate(float colorX, float colorY, float colorZ)
+{
+	return float3((float) (colorX / 255), (float) (colorY / 255), (float) (colorZ / 255));
+}
 struct MeshObj
 {
 	float indexOffset;
 	float indecesCount;
 };
+struct MeshBBox
+{
+	float3 volMin;
+	float3 volMax;
+};
+static MeshBBox _TestMeshBBox;
 struct Vertex
 {
 	float3 pos;
@@ -92,7 +106,21 @@ void Swap(inout float a, inout float b)
 	a = b;
 	b = oldA;
 }
-
+void Swap3(inout float3 a, inout float3 b)
+{
+	float3 oldA = a;
+	a = b;
+	b = oldA;
+}
+void SwapMore3(inout float3 a,inout float3 b)
+{
+	if (a.x > b.x)
+		Swap(a.x, b.x);	
+	if (a.y > b.y)
+		Swap(a.y, b.y);
+	if (a.z > b.z)
+		Swap(a.z, b.z);
+}
 
 	float getRand
 	(
@@ -439,12 +467,12 @@ void IntersectTriangle(Ray ray, inout Hit bestHit, Vertex v0, Vertex v1, Vertex 
 		bestHit.position = ray.direction * t + ray.origin + normal * 0.0001f;
 		bestHit.normal = normal;
 		//bestHit.albedo = v0.color * u + v1.color * v + v2.color * (1 - u - v);
-		bestHit.albedo = 0;
+		bestHit.albedo = 0.8f;
 		bestHit.emission = 0;
 		bestHit.specular = 0;
 		bestHit.smooth = 0;
 		bestHit.uv = float2(u, v);
-		bestHit.eta = float4(1, 1, 1, 1.5f);
+		bestHit.eta = 0;
 	}
 }
 
@@ -527,22 +555,7 @@ void IntersectFlat
 	}
 	return;
 }
-float3 Colorizate
 
-	(
-
-	float3 color)
-{
-	return (color.x / 255, color.y / 255, color.z / 255);
-}
-float3 Colorizate
-
-	(
-
-	float colorX, float colorY, float colorZ)
-{
-	return float3((float) (colorX / 255), (float) (colorY / 255), (float) (colorZ / 255));
-}
 
 void IntersectQaud
 
@@ -583,6 +596,7 @@ void IntersectPrisma
 }
 bool IntersectCubeBase(Ray ray, float3 min, float3 max, int cullMode, inout float t)
 {
+	SwapMore3(min, max);
 	float t0 = 0;
 	float t1 = 0;
 	
@@ -705,13 +719,6 @@ bool checkEqualsVolume(float3 checkedVolumeMin, float3 checkedVolumeMax, float3 
 
 bool splitedCubeIntersect(Ray ray, inout Hit bestHit, float3 checkedVolumeMin, float3 checkedVolumeMax, float3 volumeMin, float3 volumeMax, int extent)
 {
-	bool intersect = IntersectCube(ray, bestHit, volumeMin, volumeMax, 0.8f);
-	int newExtent = extent - 1;
-	if (newExtent >= 0)
-	{
-		if (checkEqualsVolume(checkedVolumeMin, checkedVolumeMax, volumeMin, volumeMax / 2))
-			splitedCubeIntersect(ray, bestHit, checkedVolumeMin, checkedVolumeMax, volumeMin, volumeMax / 2, newExtent);
-	}
 		return false;
 	}
 
@@ -725,30 +732,17 @@ bool BVHCheck(Ray ray, inout Hit bestHit, float3 checkedVolumeMin, float3 checke
 Hit Trace(Ray ray, inout float seed)
 {
 	Hit hit = InitHit();
-	float3 intersectColor = Colorizate(139, 255, 179);
-	float3 noIntersectColor = Colorizate(255, 15, 31);
-	
-	float3 volumeMin0 = float3(-1, -1, -1);
-	float3 volumeMax0 = float3(1, 1, 1);
-	IntersectCube(ray, hit, volumeMin0, volumeMax0, 0.8f);
-	
-	float3 volumeMin1 = float3(0, 0, sphere1Pos.x * 2);
-	float3 volumeMax1 = float3(1, 1, sphere1Pos.z * 2 + 1);
-	float3 color = 0;
-	if (checkEqualsVolume(volumeMin1, volumeMax1, volumeMin0, volumeMax0))
-	{
-		color = intersectColor;
-	}
-	else
-		color = noIntersectColor;
-	IntersectCube(ray, hit, volumeMin1, volumeMax1, color);
-	
-	//IntersectMesh(ray, hit, 0);
+	//if (IntersectCube(ray, hit, float3(-1, -1, -1), float3(1, 1, 1), 0.8f))
+	float somet = 0;
+	if (IntersectCubeBase(ray, float3(-1, -1, -1), float3(1, 1.7f, 1), 2, somet))
+		IntersectMesh(ray, hit, 0);
+	//IntersectSphere(ray, hit, sphere1Pos + float3(-5, 6, 0), 2, 1, 3);
 	//CheckIntersection(ray, hit, float3(1, 1, 1), 20);
-
+	//float size = 10;
+	//IntersectQaud(ray, hit, float3(-size, 0, -size), float3(size, 0, -size), float3(size, 0, size), float3(-size, 0, size), 0.8f, 0);
 	//IntersectFlat(ray, hit, float3(0, 0, 0), float3(0, 1, 0), 0.8f, 0);
 		return hit;
-	}
+}
 	float energy
 
 	(
@@ -955,32 +949,61 @@ Hit Trace(Ray ray, inout float seed)
 			result = albedo * (1 - length(float2(_PixelPos.x * screenResolution.w, _PixelPos.y) - pos) / radius);
 		return;
 	}
-
-float4 main(Input input) : SV_TARGET
+MeshBBox InitMeshBBox(MeshObj mesh)
 {
-		_PixelPos = input.pixelPos;
-		_Seed = random1Value.x;
-		_Seed1 = randomValue.x;
-		float3 result = 0;
-		uint iterCount = 8;
-		float3 viewDiraction = 0;
-		viewDiraction = initPixelPos(_PixelPos + float3((rand() * 2) - 1, (rand() * 2) - 1, (rand() * 2) - 1) * 0.0012f, float2(cameraAngle.x, cameraAngle.y), 1, screenResolution.w);
-		Ray ray = InitRay(normalize(viewDiraction), cameraPos);
-		float seed = 256;
-		for (int i = 0; i < iterCount; i++)
-		{
-			Hit hit = Trace(ray, seed);
-			result += ray.energy * Shade(ray, hit);
-			if (!any(ray.energy))
-				break;
-		}
+	float3 volMin = 99999999;
+	float3 volMax = -99999999;
+	for (int i = mesh.indexOffset; i < mesh.indecesCount; i++)
+	{
+		if (_Vertices[_Inices[i]].pos.x > volMax.x)
+			volMax.x = _Vertices[_Inices[i]].pos.x;
+		
+		if (_Vertices[_Inices[i]].pos.y > volMax.y)
+			volMax.y = _Vertices[_Inices[i]].pos.y;
+		
+		if (_Vertices[_Inices[i]].pos.z > volMax.z)
+			volMax.z = _Vertices[_Inices[i]].pos.z;
 
-		if (k.w == 0)
-		{
+		if (_Vertices[_Inices[i]].pos.x < volMin.x)
+			volMin.x = _Vertices[_Inices[i]].pos.x;
+		
+		if (_Vertices[_Inices[i]].pos.y < volMin.y)
+			volMin.y = _Vertices[_Inices[i]].pos.y;
+		
+		if (_Vertices[_Inices[i]].pos.z < volMin.z)
+			volMin.z = _Vertices[_Inices[i]].pos.z;
+	}
+	MeshBBox BBox;
+	BBox.volMin = volMin;
+	BBox.volMax = volMax;
+	return BBox;
+}
+	float4 main(Input input) : SV_TARGET
+{
+	_PixelPos = input.pixelPos;
+	_Seed = random1Value.x;
+	_Seed1 = randomValue.x;
+	float3 result = 0;
+	uint iterCount = 8;
+	float3 viewDiraction = 0;
+	_TestMeshBBox = InitMeshBBox(_Meshes[0]);
+	viewDiraction = initPixelPos(_PixelPos + float3((rand() * 2) - 1, (rand() * 2) - 1, (rand() * 2) - 1) * 0.0012f, float2(cameraAngle.x, cameraAngle.y), 1, screenResolution.w);
+	Ray ray = InitRay(normalize(viewDiraction), cameraPos);
+	float seed = 256;
+	for (int i = 0; i < iterCount; i++)
+	{
+		Hit hit = Trace(ray, seed);
+		result += ray.energy * Shade(ray, hit);
+		if (!any(ray.energy))
+			break;
+	}
+
+	if (k.w == 0)
+	{
 		//result.x = Lerp3(objTexture.Sample(objSamplerState, input.textureCoord).x, result.x, 1 / (samplesCount.y + 1));
 		//result.y = Lerp(objTexture.Sample(objSamplerState, input.textureCoord).y, result.y, 1 / (samplesCount.y + 1));
 		//result.z = Lerp(objTexture.Sample(objSamplerState, input.textureCoord).z, result.z, 1 / (samplesCount.y + 1));
-			result = (result + objTexture.Sample(objSamplerState, input.textureCoord) * (samplesCount.y - 1)) / samplesCount.y;
-		}
-		return float4(result, 1);
+		result = (result + objTexture.Sample(objSamplerState, input.textureCoord) * (samplesCount.y - 1)) / samplesCount.y;
 	}
+	return float4(result, 1);
+}

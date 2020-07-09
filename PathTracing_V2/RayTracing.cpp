@@ -10,8 +10,6 @@ RayTracing::RayTracing()
 
 	FLOAT constantData[44];
 	constantBuffer = new ConstantBuffer(constantData, sizeof(constantData));
-
-	//InitModels();
 	InitStructuredBuffer();
 	samplerState = new SamplerState();
 	InitShaderResource();
@@ -111,7 +109,6 @@ void RayTracing::CorrectScreenResolution()
 
 void RayTracing::setConstantData()
 {
-	//DX::deviceCon->UpdateSubresource(constantBuffer->pConstantBuffer, 0, constantData,  );
 	size_t lastSize;
 	constantBuffer->Map();
 	lastSize = constantBuffer->CopyMem(&position, sizeof(position));
@@ -150,7 +147,6 @@ void RayTracing::LoadTextures()
 
 void RayTracing::SetTextures()
 {
-
 	HDRshaderResource->Set(1, 1);
 	DX::deviceCon->PSSetShaderResources(2, 1, &shaderResources[0]);
 	DX::deviceCon->PSSetShaderResources(3, 1, &shaderResources[1]);

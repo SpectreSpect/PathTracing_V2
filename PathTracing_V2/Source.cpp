@@ -10,6 +10,7 @@
 #include <iostream>
 #include <sstream>
 #include "Timer.h"
+#include <algorithm>
 
 BOOL CheckMessage(MSG* msg)
 {
