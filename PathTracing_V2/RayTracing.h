@@ -18,17 +18,10 @@ public:
 		float indexOffset;
 		float indecesCount;
 	};
-	//unsigned int MeshObjectsCount = 1;
-	//unsigned int veticesCount = 3;
-	//unsigned int indicesCount = 3;
-	//MeshObj* meshObjects;
-	//Vertex* vetices;
-	//int* indices;
 	ConstantBuffer* cModelBuffer;
 	SamplerState* samplerState;
 	ShaderResourceView* HDRshaderResource;
 	ID3D11ShaderResourceView* shaderResources[7];
-	//ID3D11Resource* resource;
 	ID3D11BlendState* blender;
 	ID3D11Texture2D* texture[2]; // 2 текстуры
 	ID3D11RenderTargetView* textureRenderTarget[2]; // 2 рендер торгета для текстур, для того чтобы в них можно было рендерить

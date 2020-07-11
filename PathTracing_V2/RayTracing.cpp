@@ -4,7 +4,6 @@ RayTracing::RayTracing()
 	figure = new D3D11Model("..\\Data\\Models\\Monkey.obj");
 	LoadTextures();
 	HDRshaderResource = new ShaderResourceView(L"..\\Data\\Textures\\HDRs\\Diffuse.png");
-	//shader = new ShaderRayTracing();
 	shaderRayTracing = new ShaderRayTracing();
 	shaderTexturing = new ShaderTexturing();
 
@@ -129,7 +128,6 @@ void RayTracing::ClearFrame()
 {
 	if (currentCameraAngle.x != cameraAngle.x || currentCameraAngle.y != cameraAngle.y)
 		k.w = 1;
-
 }
 
 void RayTracing::LoadTextures()
@@ -167,15 +165,6 @@ void RayTracing::BindButtons()
 	{
 		k.x = 1;
 	}
-	if (GetAsyncKeyState('R'))
-	{
-
-	}
-	if (GetAsyncKeyState('F'))
-	{
-
-	}
-
 	if (GetAsyncKeyState('I'))
 	{
 		sphere1Pos.z += 0.001;
@@ -319,14 +308,9 @@ void RayTracing::Draw()
 
 	UINT initCount = -1;
 	DX::deviceCon->PSSetShaderResources(0, 1, &shaderResourceView[!textureQueue]);
-	//DX::deviceCon->CSSetUnorderedAccessViews(0, 1, &pStructuredBufferUAV, &initCount);
-	//DX::deviceCon->PSSetShaderResources(50, 1, &srMeshes);
 	DX::deviceCon->PSSetShaderResources(50, 1, &meshes.pSBShaderResource);
 	DX::deviceCon->PSSetShaderResources(51, 1, &vertices.pSBShaderResource);
 	DX::deviceCon->PSSetShaderResources(52, 1, &indices.pSBShaderResource);
-	//UINT initilCount = 1;
-	//DX::deviceCon->OMSetRenderTargetsAndUnorderedAccessViews(0, nullptr, nullptr, 1, 1, &pStructuredBufferUAV, &initilCount);
-	//cModelBuffer->Set(1, 1);
 	Shape::Draw(shaderRayTracing);
 	DX::deviceCon->OMSetRenderTargets(1, &DX::backRenderTargetView, NULL);
 	samplerState->Set(0, 1);

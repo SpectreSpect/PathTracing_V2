@@ -39,8 +39,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	ShowWindow(win->hwnd, nCmdShow);
 	DX::currentWindow = win->hwnd;
 	MSG msg{};
-	FLOAT colorSky[4] = { 0.4f, 0.6f, 0.96f, 1.0f };
-	FLOAT colorLightBlack[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
 	FLOAT color[4] = { 0, 0, 0, 0 };
 
 	struct VERTEX
@@ -48,27 +46,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		FLOAT x, y, z;
 		FLOAT color[4];
 	};
-	VERTEX vertices[] =
-	{
-		{-1, 1, 0, {0, 0, 0, 1.0f}},
-		{1, 1, 0, {0, 0, 0, 1.0f}},
-		{1, -1, 0.0f, {0, 0, 0, 1.0f}},
-		{-1, -1, 0.0f, {0, 0, 0, 1.0f}}
-	};
-
-	//Shape* triangle = new Shape();
-	//triangle->shader = new ShaderRayTracing();
 	InputManager::RegisterRawInput();
 	WINDOWINFO winInfo;
 	RayTracing rayTracing;
-	//HRESULT hr;
-	//UINT kek = D3D11_FORMAT_SUPPORT_VIDEO_ENCODER;
-	//hr = DX::device->CheckFormatSupport(DXGI_FORMAT_R32G32B32A32_FLOAT, &kek);
-	//if (FAILED(hr))
-	//{
-	//	MessageBox(nullptr, L"Format isn't supported", L"TestFormat", MB_ICONHAND);
-	//	DX::ApplicationRun = FALSE;
-	//}
 	while (DX::ApplicationRun == TRUE)
 	{
 		Timer::deltaTime = Timer::GetMilisecondsElapsed();
