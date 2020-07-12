@@ -6,6 +6,7 @@ public:
 	virtual ID3D11VertexShader* LoadVertexShader(LPCWSTR pathToVertexShader);
 	virtual ID3D11PixelShader* LoadPixelShader(LPCWSTR pathToPixelShader);
 	void SetShaders();
+	void SetShaders(ID3D11DeviceContext* deviceCon);
 	ID3D11VertexShader* pVertexShader;
 	ID3D11PixelShader* pPixelShader;
 	ID3D10Blob* compiledVertexShader;

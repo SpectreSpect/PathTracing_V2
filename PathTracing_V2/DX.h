@@ -28,6 +28,8 @@ public:
 	static IDXGISwapChain* swapChain;
 	static ID3D11RenderTargetView* backRenderTargetView;
 	static ID3D11Texture2D* backBufferTexture;
+	static int* windowState;
+	static int* leftButtomState;
 	static FLOAT screenResolutionWidth;
 	static FLOAT screenResolutionHeight;
 	static HWND currentWindow;

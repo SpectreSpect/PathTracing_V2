@@ -22,6 +22,13 @@ void Shader::SetShaders()
 	//DirectX::device->CreateInputLayout(inputElementDesc, numAttributes, compiledVertexShader->GetBufferPointer(), compiledVertexShader->GetBufferSize(), &pLayout);
 	DX::deviceCon->IASetInputLayout(pLayout);
 }
+void Shader::SetShaders(ID3D11DeviceContext* deviceCon)
+{
+	deviceCon->VSSetShader(pVertexShader, NULL, NULL);
+	deviceCon->PSSetShader(pPixelShader, NULL, NULL);
+	//DirectX::device->CreateInputLayout(inputElementDesc, numAttributes, compiledVertexShader->GetBufferPointer(), compiledVertexShader->GetBufferSize(), &pLayout);
+	deviceCon->IASetInputLayout(pLayout);
+}
 
 void Shader::setParametrs(UINT numAttributes, UINT vertexSize, UINT offset)
 {

@@ -19,6 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AccelerationStructure.cpp" />
+    <ClCompile Include="BVH.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ColoredVerticesShader.cpp" />
     <ClCompile Include="ConstantBuffer.cpp" />
     <ClCompile Include="D3D11Model.cpp" />
@@ -29,8 +32,10 @@
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="NewRayTracing.cpp" />
     <ClCompile Include="RayTracing.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
+    <ClCompile Include="RTObject.cpp" />
     <ClCompile Include="SamplerState.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderRayTracing.cpp" />
@@ -43,24 +48,32 @@
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AccelerationStructure.h" />
     <ClInclude Include="BaseWindow.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="BVH.h" />
+    <ClInclude Include="BVHNode.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="ColoredVerticesShader.h" />
     <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="D3D11Model.h" />
     <ClInclude Include="DefaultShader.h" />
     <ClInclude Include="DX.h" />
+    <ClInclude Include="float3.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="NewRayTracing.h" />
+    <ClInclude Include="Primitive.h" />
     <ClInclude Include="RayTracing.h" />
     <ClInclude Include="RenderTarget.h" />
+    <ClInclude Include="RTObject.h" />
     <ClInclude Include="SamplerState.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderRayTracing.h" />

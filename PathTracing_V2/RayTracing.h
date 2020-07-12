@@ -6,18 +6,23 @@
 #include "StructuredBuffer.h"
 #include "Vertex.h"
 #include "Timer.h"
-class RayTracing : public Shape
+#include "Camera.h"
+class RayTracing
 {
 public:
 	RayTracing();
 	~RayTracing();
-	virtual void Draw() override;
+	void Draw();
 	D3D11Model* figure;
 	struct MeshObj
 	{
 		float indexOffset;
 		float indecesCount;
 	};
+	Camera* camera;
+	ConstantBuffer* constantBuffer;
+	VertexBuffer* vertexBuffer;
+	IndexBuffer* indexBuffer;
 	ConstantBuffer* cModelBuffer;
 	SamplerState* samplerState;
 	ShaderResourceView* HDRshaderResource;
@@ -67,4 +72,3 @@ private:
 	void LoadTextures();
 	void SetTextures();
 };
-

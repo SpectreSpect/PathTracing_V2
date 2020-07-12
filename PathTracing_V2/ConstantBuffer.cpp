@@ -16,7 +16,6 @@ void ConstantBuffer::Release()
 	if (pConstantBuffer != nullptr)
 		pConstantBuffer->Release();
 }
-
 void ConstantBuffer::LoadData(const void* pSysMem, UINT ByteWidth, D3D11_USAGE Usage, UINT CPUAccessFlags)
 {
 	Release();
@@ -25,7 +24,8 @@ void ConstantBuffer::LoadData(const void* pSysMem, UINT ByteWidth, D3D11_USAGE U
 	constantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	constantBufferDesc.CPUAccessFlags = CPUAccessFlags;
 	constantSubData.pSysMem = pSysMem;
-	DX::device->CreateBuffer(&constantBufferDesc, &constantSubData, &pConstantBuffer);
+	HRESULT hr = DX::device->CreateBuffer(&constantBufferDesc, &constantSubData, &pConstantBuffer);
+	if (FAILED(hr)) MessageBox(nullptr, L"device->CreateBuffer() is failed", L"ConstantBuffer::LoadData()", MB_ICONERROR);
 }
 
 void ConstantBuffer::Set(UINT StartSlot, UINT NumBuffers)

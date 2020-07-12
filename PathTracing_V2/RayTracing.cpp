@@ -1,6 +1,24 @@
 #include "RayTracing.h"
 RayTracing::RayTracing()
 {
+	camera = new Camera(DX::device, float2{DX::screenResolutionWidth, DX::screenResolutionHeight});
+	unsigned short indeces[6] =
+	{
+		0, 1, 2,
+		2, 3, 0
+	};
+	indexBuffer = new IndexBuffer(indeces, sizeof(indeces), 6);
+
+	FLOAT vertices[20] =
+	{
+		-1, 1, 0.0f, 0, 0,
+		1, 1, 0.0f, 1, 0,
+		1, -1, 0.0f, 1, 1,
+		-1, -1, 0.0f, 0, 1
+	};
+	vertexBuffer = new VertexBuffer(vertices, sizeof(vertices), 4);
+
+
 	figure = new D3D11Model("..\\Data\\Models\\Monkey.obj");
 	LoadTextures();
 	HDRshaderResource = new ShaderResourceView(L"..\\Data\\Textures\\HDRs\\Diffuse.png");
@@ -285,14 +303,70 @@ Vector4 RayTracing::GetCameraDiraction(Vector4 vec1, Vector2 angleOffset)
 
 void RayTracing::Draw()
 {
+	//velocity.x = 1;
+	//velocity.w = 1;
+	//if (k.w == 1)
+	//	samplesCount.y = 0;
+	//DX::deviceCon->OMSetRenderTargets(1, &textureRenderTarget[textureQueue], NULL); // Ставлю текстуру, под индексом 0 
+	//k.w = 0;
+	//samplesCount.x = samplesAmount;
+	//samplesCount.y++;
 
+	//CorrectScreenResolution();
+	//BindButtons();
+	//HideOrShowCursor();
+
+	//SetRandomValue();
+	//Moving();
+	//setConstantData();
+	//samplerState->Set(0, 1);
+	//SetTextures();
+
+	//UINT initCount = -1;
+	//DX::deviceCon->PSSetShaderResources(0, 1, &shaderResourceView[!textureQueue]);
+	//DX::deviceCon->PSSetShaderResources(50, 1, &meshes.pSBShaderResource);
+	//DX::deviceCon->PSSetShaderResources(51, 1, &vertices.pSBShaderResource);
+	//DX::deviceCon->PSSetShaderResources(52, 1, &indices.pSBShaderResource);
+
+
+	////Draw(shaderRayTracing);
+	//constantBuffer->Set(1, 1);
+	//shaderRayTracing->SetShaders();
+	//DX::deviceCon->IASetIndexBuffer(indexBuffer->pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+	//DX::deviceCon->IASetVertexBuffers(0, 1, &vertexBuffer->pVertexBuffer, &vertexBuffer->vertexSize, &shaderRayTracing->offset);
+	//DX::deviceCon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//DX::deviceCon->DrawIndexed(indexBuffer->indecesCount, 0, 0);
+
+	////Draw(shaderTexturing);
+	//DX::deviceCon->OMSetRenderTargets(1, &DX::backRenderTargetView, NULL);
+	//shaderTexturing->SetShaders();
+	//constantBuffer->Set(1, 1);
+	//samplerState->Set(0, 1);
+	//DX::deviceCon->PSSetShaderResources(0, 1, &shaderResourceView[textureQueue]);
+	//DX::deviceCon->IASetIndexBuffer(indexBuffer->pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+	//DX::deviceCon->IASetVertexBuffers(0, 1, &vertexBuffer->pVertexBuffer, &vertexBuffer->vertexSize, &shaderTexturing->offset);
+	//DX::deviceCon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//DX::deviceCon->DrawIndexed(indexBuffer->indecesCount, 0, 0);
+	//textureQueue = !textureQueue;
+	WINDOWPLACEMENT winPlacment{};
+	winPlacment.length = sizeof(WINDOWPLACEMENT);
+	GetWindowPlacement(DX::currentWindow, &winPlacment);
+	//if(winPlacment.showCmd == 1)
+	//sphere1Pos.x = 1;
+	if (*DX::windowState == 1) 
+	{
+		sphere1Pos.x = 1;
+	}else sphere1Pos.x = 0;
+		
+
+	camera->CommitСhanges();
+	camera->Upload_ConstBuffer();
 	velocity.x = 1;
 	velocity.w = 1;
 	if (k.w == 1)
 		samplesCount.y = 0;
 	DX::deviceCon->OMSetRenderTargets(1, &textureRenderTarget[textureQueue], NULL); // Ставлю текстуру, под индексом 0 
 	k.w = 0;
-	// textureQueue - булевая переменная, textureQueue = FALSE равнасильно textureQueue = 0, поэтому выбирается текстура под индексом 0
 	samplesCount.x = samplesAmount;
 	samplesCount.y++;
 
@@ -305,17 +379,32 @@ void RayTracing::Draw()
 	setConstantData();
 	samplerState->Set(0, 1);
 	SetTextures();
-
+	DX::deviceCon->PSSetConstantBuffers(0, 1, &camera->cameraData_constBuf->pConstantBuffer);
 	UINT initCount = -1;
 	DX::deviceCon->PSSetShaderResources(0, 1, &shaderResourceView[!textureQueue]);
 	DX::deviceCon->PSSetShaderResources(50, 1, &meshes.pSBShaderResource);
 	DX::deviceCon->PSSetShaderResources(51, 1, &vertices.pSBShaderResource);
 	DX::deviceCon->PSSetShaderResources(52, 1, &indices.pSBShaderResource);
-	Shape::Draw(shaderRayTracing);
+
+
+	//Draw(shaderRayTracing);
+	constantBuffer->Set(1, 1);
+	shaderRayTracing->SetShaders();
+	DX::deviceCon->IASetIndexBuffer(indexBuffer->pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+	DX::deviceCon->IASetVertexBuffers(0, 1, &vertexBuffer->pVertexBuffer, &vertexBuffer->vertexSize, &shaderRayTracing->offset);
+	DX::deviceCon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	DX::deviceCon->DrawIndexed(indexBuffer->indecesCount, 0, 0);
+
+	//Draw(shaderTexturing);
 	DX::deviceCon->OMSetRenderTargets(1, &DX::backRenderTargetView, NULL);
+	shaderTexturing->SetShaders();
+	constantBuffer->Set(1, 1);
 	samplerState->Set(0, 1);
 	DX::deviceCon->PSSetShaderResources(0, 1, &shaderResourceView[textureQueue]);
-	Shape::Draw(shaderTexturing);
+	DX::deviceCon->IASetIndexBuffer(indexBuffer->pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+	DX::deviceCon->IASetVertexBuffers(0, 1, &vertexBuffer->pVertexBuffer, &vertexBuffer->vertexSize, &shaderTexturing->offset);
+	DX::deviceCon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	DX::deviceCon->DrawIndexed(indexBuffer->indecesCount, 0, 0);
 	textureQueue = !textureQueue;
 }
 

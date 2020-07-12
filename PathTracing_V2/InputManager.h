@@ -12,6 +12,9 @@ public:
 	static void HandleRawInputMessage(MSG* msg);
 	static void RegisterRawInput();
 	static void ClearInputData();
+	static bool cursorHidden;
+	static bool cursorEnable;
+	static bool cursorClamped;
 	static std::vector<char> rawBuffer;
 	static FLOAT MouseX;
 	static FLOAT MouseY;

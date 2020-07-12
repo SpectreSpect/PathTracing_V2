@@ -9,8 +9,13 @@ struct Input
 	float4 pos : SV_POSITION;
 	float2 textureCoord : TEXCOORD;
 };
+cbuffer camera_CBuffer : register(b0)
+{
+	float3 testCameraPos : TESTCAMERAPOS;
+	float2 testCameraAngle : TESTCAMERAANGLE;
+};
 
-cbuffer CBuffer : register(b0)
+cbuffer CBuffer : register(b1)
 {
 	float4 vertexPos : VERTEXPOS;
 	float4 sphere1Pos : SPHERE1POS;
@@ -989,8 +994,8 @@ MeshBBox InitMeshBBox(MeshObj mesh)
 	uint iterCount = 8;
 	float3 viewDiraction = 0;
 	_TestMeshBBox = InitMeshBBox(_Meshes[0]);
-	viewDiraction = initPixelPos(_PixelPos + float3((rand() * 2) - 1, (rand() * 2) - 1, (rand() * 2) - 1) * 0.0012f, float2(cameraAngle.x, cameraAngle.y), 1, screenResolution.w);
-	Ray ray = InitRay(normalize(viewDiraction), cameraPos);
+	viewDiraction = initPixelPos(_PixelPos + float3((rand() * 2) - 1, (rand() * 2) - 1, (rand() * 2) - 1) * 0.0012f, float2(testCameraAngle.x, testCameraAngle.y), 1, screenResolution.w);
+	Ray ray = InitRay(normalize(viewDiraction), testCameraPos);
 	float seed = 256;
 	for (int i = 0; i < iterCount; i++)
 	{
@@ -1007,5 +1012,13 @@ MeshBBox InitMeshBBox(MeshObj mesh)
 		//result.z = Lerp(objTexture.Sample(objSamplerState, input.textureCoord).z, result.z, 1 / (samplesCount.y + 1));
 		result = (result + objTexture.Sample(objSamplerState, input.textureCoord) * (samplesCount.y - 1)) / samplesCount.y;
 	}
-	return float4(result, 1);
+	result = 0;
+	//if (sphere1Pos.x == 4)
+	//	//result.x = 1;
+	//if (sphere1Pos.x == 1)
+	//	result.y = 1;
+	//if (sphere1Pos.x == 5)
+	//	result.z = 1;
+	result.x = sphere1Pos.x;
+	return float4(0, result.x, result.x, 1);
 }

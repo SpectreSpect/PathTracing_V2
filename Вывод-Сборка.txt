@@ -1,0 +1,6 @@
+﻿1>------ Сборка начата: проект: PathTracing_V2, Конфигурация: Debug x64 ------
+1>NewRayTracing.cpp
+1>E:\VisualStudioProjects\PathTracing_V2\PathTracing_V2\Vertex.h(2,10): warning C4067: непредвиденные лексемы за директивой препроцессора, требуется newline
+1>PathTracing_V2.vcxproj -> E:\VisualStudioProjects\PathTracing_V2\x64\Debug\PathTracing_V2.exe
+1>Сборка проекта "PathTracing_V2.vcxproj" завершена.
+========== Сборка: успешно: 1, с ошибками: 0, без изменений: 0, пропущено: 0 ==========

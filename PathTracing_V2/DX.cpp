@@ -8,6 +8,8 @@ ID3D11RenderTargetView* DX::backRenderTargetView;
 ID3D11Texture2D* DX::backBufferTexture;
 FLOAT DX::screenResolutionWidth = 1920;
 FLOAT DX::screenResolutionHeight = 1080;
+int* DX::windowState;
+int* DX::leftButtomState;
 HWND DX::currentWindow;
 DX::~DX()
 {
