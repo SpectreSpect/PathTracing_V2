@@ -7,16 +7,23 @@
 #include <vector>
 #include "RTObject.h"
 #include "Camera.h"
+#include "ComputeShader.h"
+#include "UnorderedAccessView.h"
+#include "Buffer.h"
 class NewRayTracing
 {
 public:
-	NewRayTracing(const std::vector<RTObject*> objects);
+	NewRayTracing(ID3D11Device* device, const std::vector<RTObject*> objects);
 	~NewRayTracing();
 	Camera* camera;
 	VertexBuffer* screenQuadVertexBuffer;
 	ShaderTexturing shaderTexturing;
 	SamplerState samplerState;
-	void Draw(ID3D11DeviceContext* deviceCon, int leftButtonState, int windowState);
+	ComputeShader* rayGenerationShader;
+	ID3D11ShaderResourceView* shaderResource;
+	Buffer UAVBuffer;
+	UnorderedAccessView* UAV;
+	void Draw(ID3D11DeviceContext* deviceCon, float screenWidth, float screenHeight, int leftButtonState, int windowState);
 private:
 	DWORD HandelCursor(int leftButtonState);
 };

@@ -1,8 +1,11 @@
 #include "NewRayTracing.h"
 
-NewRayTracing::NewRayTracing(const std::vector<RTObject*> objects)
+NewRayTracing::NewRayTracing(ID3D11Device* device, const std::vector<RTObject*> objects)
 {
-	//DirectX::CreateWICTextureFromFile(DX::device, L"..\\Data\\Textures\\cfer.png", nullptr, &shaderResource);
+	DirectX::CreateWICTextureFromFile(DX::device, L"..\\Data\\Textures\\cfer.png", nullptr, &shaderResource);
+	rayGenerationShader = new ComputeShader(device, L"RayGenerationShader.hlsl", "main", "cs_5_0");
+	UAVBuffer.InitBuffer_UAV(device, malloc(1920 * 1080 * sizeof(FLOAT) * 4), 1920 * 1080 * sizeof(FLOAT) * 4, sizeof(FLOAT) * 4);
+	UAV = new UnorderedAccessView(device, UAVBuffer.pBuffer, 1920 * 1080);
 	camera = new Camera(DX::device, float2{DX::screenResolutionWidth, DX::screenResolutionHeight});
 	FLOAT vertices[30]
 	{
@@ -20,6 +23,8 @@ NewRayTracing::~NewRayTracing()
 {
 	delete screenQuadVertexBuffer;
 	delete camera;
+	delete rayGenerationShader;
+	delete UAV;
 }
 DWORD NewRayTracing::HandelCursor(int leftButtonState)
 {
@@ -45,13 +50,17 @@ DWORD NewRayTracing::HandelCursor(int leftButtonState)
 	}
 	return cursorInfo.flags;
 }
-void NewRayTracing::Draw(ID3D11DeviceContext* deviceCon, int leftButtonState, int windowState)
+void NewRayTracing::Draw(ID3D11DeviceContext* deviceCon,float screenWidth, float screenHeight, int leftButtonState, int windowState)
 {
-	camera->Set(deviceCon, 0);
-	if(HandelCursor(leftButtonState) == 0 || windowState == 1)
-	camera->CommitÑhanges();
-	camera->Upload_ConstBuffer();
-	camera->Set_ConstBuffer(deviceCon, 0, 1);
+	//camera->Set(deviceCon, 0);
+	if (HandelCursor(leftButtonState) == 0 || windowState == 1);
+		//camera->CommitÑhanges();
+		//camera->Upload_ConstBuffer();
+		//camera->Set_ConstBuffer(deviceCon, 0, 1);
+	deviceCon->CSSetShader(rayGenerationShader->pComputeShader, NULL, 0);
+	deviceCon->CSSetShaderResources(0, 1, &shaderResource);
+	deviceCon->CSSetUnorderedAccessViews(0, 1, &UAV->pUnorderedAccessView, NULL);
+	deviceCon->Dispatch(std::ceil(screenWidth / 8), std::ceil(screenHeight / 8), 1);
 
 	shaderTexturing.SetShaders(deviceCon);
 	deviceCon->IASetVertexBuffers(0, 1, &screenQuadVertexBuffer->pVertexBuffer, &screenQuadVertexBuffer->vertexSize, &shaderTexturing.offset);
