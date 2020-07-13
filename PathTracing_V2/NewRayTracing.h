@@ -13,16 +13,19 @@
 class NewRayTracing
 {
 public:
-	NewRayTracing(ID3D11Device* device, const std::vector<RTObject*> objects);
+	NewRayTracing(ID3D11Device* device, const std::vector<RTObject*> objects, float screenWidth, float screenHeight);
 	~NewRayTracing();
 	Camera* camera;
 	VertexBuffer* screenQuadVertexBuffer;
 	ShaderTexturing shaderTexturing;
 	SamplerState samplerState;
 	ComputeShader* rayGenerationShader;
-	ID3D11ShaderResourceView* shaderResource;
+
 	Buffer UAVBuffer;
+	ID3D11Texture2D* texture;
+	ID3D11ShaderResourceView* shaderResource;
 	UnorderedAccessView* UAV;
+	ID3D11Texture2D* UAVTexture;
 	void Draw(ID3D11DeviceContext* deviceCon, float screenWidth, float screenHeight, int leftButtonState, int windowState);
 private:
 	DWORD HandelCursor(int leftButtonState);

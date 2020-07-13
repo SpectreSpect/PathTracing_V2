@@ -8,7 +8,7 @@
 #include "RayTracing.h"
 #include "NewRayTracing.h"
 #include "RTObject.h"
-
+#include "TestingComputeShader.h"
 #include <iostream>
 #include <sstream>
 #include "Timer.h"
@@ -58,7 +58,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	WINDOWINFO winInfo;
 	//RayTracing rayTracing;
 	std::vector<RTObject*> objects;
-	NewRayTracing newRayTracing(DX::device, objects);
+	//NewRayTracing newRayTracing(DX::device, objects, DX::screenResolutionWidth, DX::screenResolutionHeight);
+	TestingComputeShader test(DX::device);
 	while (DX::ApplicationRun == TRUE)
 	{
 		Timer::deltaTime = Timer::GetMilisecondsElapsed();
@@ -71,8 +72,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		DX::screenResolutionWidth = winInfo.rcClient.right - winInfo.rcClient.left;
 		DX::screenResolutionHeight = winInfo.rcClient.bottom - winInfo.rcClient.top;
 		DX::deviceCon->ClearRenderTargetView(DX::backRenderTargetView, color);
+		test.Draw(DX::deviceCon);
 		//rayTracing.Draw();
-		newRayTracing.Draw(DX::deviceCon, DX::screenResolutionWidth, DX::screenResolutionHeight,  win->leftButtomState, win->windowState);
+		//newRayTracing.Draw(DX::deviceCon, DX::screenResolutionWidth, DX::screenResolutionHeight,  win->leftButtomState, win->windowState);
 		InputManager::ClearInputData();
 		DX::swapChain->Present(0, 0);
 	}

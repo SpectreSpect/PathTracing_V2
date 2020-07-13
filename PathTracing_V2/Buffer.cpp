@@ -39,3 +39,8 @@ void Buffer::InitBuffer_UAV(ID3D11Device* device, void* pData, UINT ByteWidth, U
 		MessageBox(nullptr, L"CreateBuffer() is failed", L"UnorderedAccessView::Init()", MB_ICONERROR);
 }
 
+void Buffer::InitBuffer_SRV(ID3D11Device* device, void* pData, UINT ByteWidth, UINT StructureByteStride)
+{
+
+}
+

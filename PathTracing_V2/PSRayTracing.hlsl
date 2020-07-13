@@ -1012,13 +1012,6 @@ MeshBBox InitMeshBBox(MeshObj mesh)
 		//result.z = Lerp(objTexture.Sample(objSamplerState, input.textureCoord).z, result.z, 1 / (samplesCount.y + 1));
 		result = (result + objTexture.Sample(objSamplerState, input.textureCoord) * (samplesCount.y - 1)) / samplesCount.y;
 	}
-	result = 0;
-	//if (sphere1Pos.x == 4)
-	//	//result.x = 1;
-	//if (sphere1Pos.x == 1)
-	//	result.y = 1;
-	//if (sphere1Pos.x == 5)
-	//	result.z = 1;
-	result.x = sphere1Pos.x;
-	return float4(0, result.x, result.x, 1);
+
+	return float4(result, 1);
 }

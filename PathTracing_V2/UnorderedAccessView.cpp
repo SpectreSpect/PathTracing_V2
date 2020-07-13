@@ -27,11 +27,11 @@ void UnorderedAccessView::Init(ID3D11Device* device, ID3D11Resource* resource, U
 		pUnorderedAccessView->Release();
 
 	D3D11_UNORDERED_ACCESS_VIEW_DESC unorderedAccessViewDesc{};
-	unorderedAccessViewDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+	unorderedAccessViewDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
 	unorderedAccessViewDesc.Format = DXGI_FORMAT_UNKNOWN;
 	unorderedAccessViewDesc.Buffer.FirstElement = 0;
 	unorderedAccessViewDesc.Buffer.NumElements = NumElements;
-	if (FAILED(device->CreateUnorderedAccessView(dataBuffer, &unorderedAccessViewDesc, &pUnorderedAccessView)))
+	if (FAILED(device->CreateUnorderedAccessView(resource, &unorderedAccessViewDesc, &pUnorderedAccessView)))
 		MessageBox(nullptr, L"CreateUnorderedAccessView() is failed", L"UnorderedAccessView::Init()", MB_ICONERROR);
 }
 //void UnorderedAccessView::Init(ID3D11Device* device, void* pData,  UINT ByteWidth, UINT StructureByteStride)
