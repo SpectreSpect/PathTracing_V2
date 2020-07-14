@@ -10,7 +10,7 @@ StructuredBuffer::~StructuredBuffer()
 	Release(pSBShaderResource);
 }
 
-HRESULT StructuredBuffer::InitSBuffer(ID3D11Device* device, const UINT StructureByteStride, const UINT ByteWidth)
+HRESULT StructuredBuffer::InitSBuffer(ID3D11Device* device, const UINT StructureByteStride, const UINT ByteWidth, void* pData)
 {
 	Release(pSBuffer);
 	D3D11_BUFFER_DESC sbDesc;
@@ -20,7 +20,17 @@ HRESULT StructuredBuffer::InitSBuffer(ID3D11Device* device, const UINT Structure
 	sbDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 	sbDesc.StructureByteStride = StructureByteStride;
 	sbDesc.ByteWidth = ByteWidth;
-	HRESULT hr = device->CreateBuffer(&sbDesc, 0, &pSBuffer);
+	HRESULT hr;
+	if (pData) 
+	{
+		D3D11_SUBRESOURCE_DATA subData{};
+		subData.pSysMem = pData;
+		hr = device->CreateBuffer(&sbDesc, &subData, &pSBuffer);
+	}
+	else 
+	{
+		hr = device->CreateBuffer(&sbDesc, 0, &pSBuffer);
+	}
 	return hr;
 }
 

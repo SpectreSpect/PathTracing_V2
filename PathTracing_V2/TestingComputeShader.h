@@ -30,23 +30,24 @@ public:
 	};
 	ID3D11Buffer* ray_Buffer;
 	ID3D11UnorderedAccessView* ray_UAV;
+	ID3D11ShaderResourceView* ray_SRV;
 	ConstantBuffer* ray_ConstantBuffer;
 
 	struct SpherePrimetive
 	{
-		float4 spherePos;
-		//float radius;
-		//int objID;
+		float3 spherePos;
+		float radius;
+		int objID;
 	};
 	UINT spherePrimetive_Count = 1;
 	ID3D11Buffer* spherePrimetive_Buffer;
 	ID3D11ShaderResourceView* spherePrimetive_SRV;
 
 private:
-	void InitRayGenerator(ID3D11Device* device, ID3D11Buffer* ray_Buffer, ID3D11UnorderedAccessView* rayUAV);
-	void InitRayIntersector(ID3D11Device* device, ID3D11Buffer* spherePrimetive_Buffer, ID3D11ShaderResourceView* spherePrimetive_SRV, void* spherePrimetive_pData, UINT spherePrimetive_Count);
+	void InitRayGenerator(ID3D11Device* device, ID3D11Buffer** ray_Buffer, ID3D11UnorderedAccessView** ray_UAV, ID3D11ShaderResourceView** ray_SRV);
+	void InitRayIntersector(ID3D11Device* device, ID3D11Buffer** spherePrimetive_Buffer, ID3D11ShaderResourceView** spherePrimetive_SRV, void* spherePrimetive_pData, UINT spherePrimetive_Count);
 	void GenerateRays(ID3D11DeviceContext* deviceCon, ID3D11UnorderedAccessView** outPut_UAV, ID3D11UnorderedAccessView** ray_UAV, ConstantBuffer* ray_ConstantBuffer);
-	void IntersectPrimetives(ID3D11DeviceContext* deviceCon);
+	void IntersectPrimetives(ID3D11DeviceContext* deviceCon, ID3D11ShaderResourceView** spherePrimetive_SRV, ID3D11ShaderResourceView** ray_SRV, ID3D11UnorderedAccessView** output_UAV);
 	float screenWidth;
 	float screenHeight;
 	ShaderTexturing* shaderTexturing;
