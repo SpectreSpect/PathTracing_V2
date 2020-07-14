@@ -934,18 +934,14 @@ Hit Trace(Ray ray, inout float seed)
 			return HDRtexture.SampleLevel(objSamplerState, float2(phi / (2 * PI), theta / PI), 0);
 		}
 	}
-	float3 initPixelPos
-
-	(
-
-	float3 pixelPos, float2 cameraAngle, float viewingAngle, float screenResolutionCoefficient)
+float3 initPixelPos(float3 pixelPos, float2 cameraAngle, float viewingAngle, float screenResolutionCoefficient)
 {
-		float3 pos = float3(0, 0, 0);
-		pos.x = (viewingAngle * sin(cameraAngle.x) * cos(cameraAngle.y)) + pixelPos.x * screenResolutionCoefficient * cos(cameraAngle.x) - pixelPos.y * sin(cameraAngle.y) * sin(cameraAngle.x);
-		pos.y = viewingAngle * sin(cameraAngle.y) + pixelPos.y * cos(cameraAngle.y);
-		pos.z = viewingAngle * cos(cameraAngle.x) * cos(cameraAngle.y) - pixelPos.x * screenResolutionCoefficient * sin(cameraAngle.x) - pixelPos.y * sin(cameraAngle.y) * cos(cameraAngle.x);
-		return pos;
-	}
+	float3 pos = float3(0, 0, 0);
+	pos.x = (viewingAngle * sin(cameraAngle.x) * cos(cameraAngle.y)) + pixelPos.x * screenResolutionCoefficient * cos(cameraAngle.x) - pixelPos.y * sin(cameraAngle.y) * sin(cameraAngle.x);
+	pos.y = viewingAngle * sin(cameraAngle.y) + pixelPos.y * cos(cameraAngle.y);
+	pos.z = viewingAngle * cos(cameraAngle.x) * cos(cameraAngle.y) - pixelPos.x * screenResolutionCoefficient * sin(cameraAngle.x) - pixelPos.y * sin(cameraAngle.y) * cos(cameraAngle.x);
+	return pos;
+}
 
 	void intersectCyrcle
 

@@ -13,8 +13,6 @@ public:
 	size_t CopyMem(const void* data, size_t dataSize, size_t offset = 0);
 	void UnMap();
 	ID3D11Buffer* pConstantBuffer;
-	D3D11_BUFFER_DESC constantBufferDesc{};
-	D3D11_SUBRESOURCE_DATA constantSubData{};
 	size_t currentOffset;
 private:
 	BOOL mapped;
