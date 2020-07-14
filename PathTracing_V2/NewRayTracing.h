@@ -5,15 +5,15 @@
 #include "ShaderTexturing.h"
 #include "SamplerState.h"
 #include <vector>
-#include "RTObject.h"
 #include "Camera.h"
 #include "ComputeShader.h"
 #include "UnorderedAccessView.h"
 #include "Buffer.h"
+#include "Object_PT.h"
 class NewRayTracing
 {
 public:
-	NewRayTracing(ID3D11Device* device, const std::vector<RTObject*> objects, float screenWidth, float screenHeight);
+	NewRayTracing(ID3D11Device* device, const std::vector<Object_PT*> objects, float screenWidth, float screenHeight);
 	~NewRayTracing();
 	Camera* camera;
 	VertexBuffer* screenQuadVertexBuffer;

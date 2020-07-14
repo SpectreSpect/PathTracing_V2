@@ -90,9 +90,6 @@
     <ClCompile Include="NewRayTracing.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="RTObject.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -106,6 +103,9 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="TestingComputeShader.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Sphere_PT.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -200,9 +200,6 @@
     <ClInclude Include="NewRayTracing.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="RTObject.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
@@ -216,6 +213,12 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="TestingComputeShader.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Object_PT.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Sphere_PT.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

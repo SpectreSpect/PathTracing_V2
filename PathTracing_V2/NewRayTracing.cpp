@@ -1,6 +1,6 @@
 #include "NewRayTracing.h"
 
-NewRayTracing::NewRayTracing(ID3D11Device* device, const std::vector<RTObject*> objects, float screenWidth, float screenHeight)
+NewRayTracing::NewRayTracing(ID3D11Device* device, const std::vector<Object_PT*> objects, float screenWidth, float screenHeight)
 {
 	//DirectX::CreateWICTextureFromFile(DX::device, L"..\\Data\\Textures\\cfer.png", nullptr, &shaderResource);
 	rayGenerationShader = new ComputeShader(device, L"RayGenerationShader.hlsl", "main", "cs_5_0");

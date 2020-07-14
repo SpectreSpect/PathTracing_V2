@@ -37,7 +37,6 @@
     <ClCompile Include="NewRayTracing.cpp" />
     <ClCompile Include="RayTracing.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
-    <ClCompile Include="RTObject.cpp" />
     <ClCompile Include="SamplerState.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderRayTracing.cpp" />
@@ -45,6 +44,7 @@
     <ClCompile Include="ShaderTexturing.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="Sphere_PT.cpp" />
     <ClCompile Include="StructuredBuffer.cpp" />
     <ClCompile Include="TestingComputeShader.cpp" />
     <ClCompile Include="Timer.cpp" />
@@ -76,16 +76,17 @@
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="NewRayTracing.h" />
+    <ClInclude Include="Object_PT.h" />
     <ClInclude Include="Primitive.h" />
     <ClInclude Include="RayTracing.h" />
     <ClInclude Include="RenderTarget.h" />
-    <ClInclude Include="RTObject.h" />
     <ClInclude Include="SamplerState.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderRayTracing.h" />
     <ClInclude Include="ShaderResourceView.h" />
     <ClInclude Include="ShaderTexturing.h" />
     <ClInclude Include="Shape.h" />
+    <ClInclude Include="Sphere_PT.h" />
     <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="TestingComputeShader.h" />
     <ClInclude Include="Timer.h" />

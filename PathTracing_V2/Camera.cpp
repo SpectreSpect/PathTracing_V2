@@ -2,7 +2,7 @@
 
 Camera::Camera(ID3D11Device* device, const float2 resolution)
 {
-	type = RTObjectType::Camera;
+	//type = RTObjectType::Camera;
 	int size_ConstBuf = multipleTo(sizeof(oldCameraPos) + sizeof(cameraAngle), 16);
 	cameraData_constBuf = new ConstantBuffer(malloc(size_ConstBuf), size_ConstBuf);
 	for (int i = 0; i < 2; i++) 

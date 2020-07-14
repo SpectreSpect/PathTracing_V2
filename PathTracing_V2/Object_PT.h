@@ -1,17 +1,16 @@
 #pragma once
-#include "Primitive.h"
 #include <vector>
 #include "float3.h"
 
-class RTObject
+class Object_PT
 {
 public:
-	enum class RTObjectType
+	enum class ObjectType_PT
 	{
 		Model = 0,
 		Sphere = 1,
 		Camera = 2
 	};
-	RTObjectType type;
+	ObjectType_PT type;
 };
 

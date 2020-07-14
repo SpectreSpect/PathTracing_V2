@@ -1,10 +1,10 @@
 #pragma once
 #include <d3d11.h>
-#include "RTObject.h"
 #include "Timer.h"
 #include "ConstantBuffer.h"
 #include "InputManager.h"
-class Camera : public RTObject
+#include "Object_PT.h"
+class Camera : public Object_PT
 {
 public:
 	Camera(ID3D11Device* device, const float2 resolution);

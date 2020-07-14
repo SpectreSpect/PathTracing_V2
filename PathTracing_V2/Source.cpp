@@ -7,13 +7,14 @@
 #include <vector>
 #include "RayTracing.h"
 #include "NewRayTracing.h"
-#include "RTObject.h"
+#include "Object_PT.h"
 #include "TestingComputeShader.h"
 #include <iostream>
 #include <sstream>
 #include "Timer.h"
 #include <algorithm>
 #include <Winuser.h>
+#include "Sphere_PT.h"
 BOOL CheckMessage(MSG* msg)
 {
 	while (PeekMessage(msg, NULL, 0, 0, PM_REMOVE))
@@ -46,9 +47,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	MSG msg{};
 	FLOAT color[4] = { 0, 0, 0, 0 };
 
-
-
-
 	struct VERTEX
 	{
 		FLOAT x, y, z;
@@ -57,9 +55,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	InputManager::RegisterRawInput();
 	WINDOWINFO winInfo;
 	//RayTracing rayTracing;
-	std::vector<RTObject*> objects;
 	//NewRayTracing newRayTracing(DX::device, objects, DX::screenResolutionWidth, DX::screenResolutionHeight);
-	TestingComputeShader test(DX::device);
+	std::vector<Object_PT*> objects;
+	Sphere_PT someSphere(objects, 0.5f, float3{ -1, 0, 2 }, float3{0.4f, 0.7f, 1});
+	Sphere_PT someSphere1(objects, 0.5f, float3{ 1, 2, 5 }, float3{1, 0, 0.5f});
+	TestingComputeShader test(DX::device, objects);
 	while (DX::ApplicationRun == TRUE)
 	{
 		Timer::deltaTime = Timer::GetMilisecondsElapsed();
