@@ -5,6 +5,7 @@ TestingComputeShader::TestingComputeShader(ID3D11Device* device)
 	screenWidth = DX::screenResolutionWidth;
 	screenHeight = DX::screenResolutionHeight;
 	rayGenerationShader = new ComputeShader(device, L"RayGenerationShader.hlsl", "main", "cs_5_0");
+	intersectionShader = new ComputeShader(device, L"IntersectionShader.hlsl", "main", "cs_5_0");
 	shaderTexturing = new ShaderTexturing();
 	samplerState = new SamplerState();
 	FLOAT vertices[30]
@@ -17,7 +18,10 @@ TestingComputeShader::TestingComputeShader(ID3D11Device* device)
 		-1.0f,  1.0f, 0.0f, 0, 0,
 	};
 	screenQuadVertexBuffer = new VertexBuffer(vertices, sizeof(vertices), 6);
-
+	SpherePrimetive spherePrimvetive{};
+	//spherePrimvetive.objID = 1;
+	//spherePrimvetive.radius = 1;
+	spherePrimvetive.spherePos = float4{1, 1, 1, 1};
 
 	D3D11_TEXTURE2D_DESC textureDesc;
 	ZeroMemory(&textureDesc, sizeof(textureDesc));
@@ -35,7 +39,7 @@ TestingComputeShader::TestingComputeShader(ID3D11Device* device)
 	if(FAILED(device->CreateTexture2D(&textureDesc, NULL, &output_texture)))
 		MessageBox(nullptr, L"CreateTexture2D() for (output_texture) is failed", L"TestingComputeShader::TestingComputeShader()", MB_ICONERROR);
 
-	D3D11_SHADER_RESOURCE_VIEW_DESC output_SRV_Desc;
+	D3D11_SHADER_RESOURCE_VIEW_DESC output_SRV_Desc{};
 	output_SRV_Desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	output_SRV_Desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	output_SRV_Desc.Texture2D.MostDetailedMip = 0;
@@ -50,15 +54,20 @@ TestingComputeShader::TestingComputeShader(ID3D11Device* device)
 	if (FAILED(device->CreateUnorderedAccessView(output_texture, &output_UAV_Desc, &output_UAV)))
 		MessageBox(nullptr, L"CreateUnorderedAccessView() for (output_UAV) is failed", L"TestingComputeShader::TestingComputeShader()", MB_ICONERROR);
 
+	InitRayGenerator(device, ray_Buffer, ray_UAV);
+	InitRayIntersector(device, spherePrimetive_Buffer, spherePrimetive_SRV, &spherePrimvetive, 1);
+}
 
-	D3D11_BUFFER_DESC ray_Buffer_Desc;
+void TestingComputeShader::InitRayGenerator(ID3D11Device* device, ID3D11Buffer* ray_Buffer, ID3D11UnorderedAccessView* ray_UAV)
+{
+	D3D11_BUFFER_DESC ray_Buffer_Desc{};
 	ray_Buffer_Desc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
 	ray_Buffer_Desc.CPUAccessFlags = 0;
 	ray_Buffer_Desc.Usage = D3D11_USAGE_DEFAULT;
 	ray_Buffer_Desc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 	ray_Buffer_Desc.StructureByteStride = sizeof(Ray);
 	ray_Buffer_Desc.ByteWidth = sizeof(Ray) * screenWidth * screenHeight;
-	if(FAILED(device->CreateBuffer(&ray_Buffer_Desc, 0, &ray_Buffer)))
+	if (FAILED(device->CreateBuffer(&ray_Buffer_Desc, 0, &ray_Buffer)))
 		MessageBox(nullptr, L"CreateBuffer() for (ray_Buffer) is failed", L"TestingComputeShader::TestingComputeShader()", MB_ICONERROR);
 
 	D3D11_UNORDERED_ACCESS_VIEW_DESC ray_UAV_Desc{};
@@ -70,6 +79,32 @@ TestingComputeShader::TestingComputeShader(ID3D11Device* device)
 		MessageBox(nullptr, L"CreateUnorderedAccessView() for (output_UAV) is failed", L"TestingComputeShader::TestingComputeShader()", MB_ICONERROR);
 
 	ray_ConstantBuffer = new ConstantBuffer(malloc(16 * 2), 16 * 2);
+}
+
+void TestingComputeShader::InitRayIntersector(ID3D11Device* device, ID3D11Buffer* spherePrimetive_Buffer, ID3D11ShaderResourceView* spherePrimetive_SRV, void* spherePrimetive_pData, UINT spherePrimetive_Count)
+{
+	D3D11_BUFFER_DESC spherePrimetive_Buffer_Desc{};
+	spherePrimetive_Buffer_Desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	spherePrimetive_Buffer_Desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	spherePrimetive_Buffer_Desc.Usage = D3D11_USAGE_DYNAMIC;
+	spherePrimetive_Buffer_Desc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	spherePrimetive_Buffer_Desc.StructureByteStride = sizeof(SpherePrimetive);
+	spherePrimetive_Buffer_Desc.ByteWidth = sizeof(SpherePrimetive) * spherePrimetive_Count;
+	D3D11_SUBRESOURCE_DATA subData{};
+	subData.pSysMem = spherePrimetive_pData;
+	if (FAILED(device->CreateBuffer(&spherePrimetive_Buffer_Desc, &subData, &spherePrimetive_Buffer)))
+		MessageBox(nullptr, L"CreateBuffer() for (spherePrimetive_Buffer) is failed", L"TestingComputeShader::InitRayIntersector()", MB_ICONERROR);
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC spherePrimetive_SRV_Desc{};
+	spherePrimetive_SRV_Desc.Format = DXGI_FORMAT_UNKNOWN;
+	spherePrimetive_SRV_Desc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	spherePrimetive_SRV_Desc.Buffer.FirstElement = 0;
+	spherePrimetive_SRV_Desc.Buffer.ElementOffset = 0;
+	spherePrimetive_SRV_Desc.Buffer.ElementWidth = sizeof(SpherePrimetive);
+	spherePrimetive_SRV_Desc.Buffer.NumElements = spherePrimetive_Count;
+
+	if (FAILED(device->CreateShaderResourceView(spherePrimetive_Buffer, &spherePrimetive_SRV_Desc, &spherePrimetive_SRV)))
+		MessageBox(nullptr, L"CreateShaderResourceView() for (spherePrimetive_SRV) is failed", L"TestingComputeShader::InitRayIntersector()", MB_ICONERROR);
 }
 
 void TestingComputeShader::GenerateRays(ID3D11DeviceContext* deviceCon, ID3D11UnorderedAccessView** outPut_UAV, ID3D11UnorderedAccessView** ray_UAV, ConstantBuffer* ray_ConstantBuffer)
@@ -92,12 +127,28 @@ void TestingComputeShader::GenerateRays(ID3D11DeviceContext* deviceCon, ID3D11Un
 	//Unbind
 	deviceCon->CSSetUnorderedAccessViews(0, 1, &UAV_NULL, NULL);
 	deviceCon->CSSetUnorderedAccessViews(1, 1, &UAV_NULL, NULL);
+	deviceCon->CSSetConstantBuffers(0, 1, &ConstantBuffer_NULL);
+	deviceCon->CSSetShader(NULL, NULL, 0);
+}
+void TestingComputeShader::IntersectPrimetives(ID3D11DeviceContext* deviceCon)
+{
+	//Bind
+	deviceCon->CSSetShader(intersectionShader->pComputeShader, NULL, 0);
+	deviceCon->CSSetShaderResources(0, 1, &spherePrimetive_SRV);
+	deviceCon->CSSetUnorderedAccessViews(0, 1, &output_UAV, NULL);
+
+	deviceCon->Dispatch(screenWidth / 8, screenHeight / 8, 1);
+
+	//Unbind
+	deviceCon->CSSetShaderResources(0, 1, &SRV_NULL);
+	deviceCon->CSSetUnorderedAccessViews(0, 1, &UAV_NULL, NULL);
 	deviceCon->CSSetShader(NULL, NULL, 0);
 }
 void TestingComputeShader::Draw(ID3D11DeviceContext* deviceCon)
 {
 	samplesCount++;
 	GenerateRays(deviceCon, &output_UAV, &ray_UAV, ray_ConstantBuffer);
+	IntersectPrimetives(deviceCon);
 	//Bind
 	deviceCon->OMSetRenderTargets(1, &DX::backRenderTargetView, NULL);
 	shaderTexturing->SetShaders(deviceCon);

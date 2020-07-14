@@ -230,5 +230,6 @@
     <FxCompile Include="PSRayTracing.hlsl" />
     <FxCompile Include="PSDefault.hlsl" />
     <FxCompile Include="RayGenerationShader.hlsl" />
+    <FxCompile Include="IntersectionShader.hlsl" />
   </ItemGroup>
 </Project>

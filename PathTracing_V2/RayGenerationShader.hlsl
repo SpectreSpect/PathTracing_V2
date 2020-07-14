@@ -44,10 +44,7 @@ void main(uint3 threadID : SV_DispatchThreadID)
 	Result.GetDimensions(width, height);
 	//float2 uv = float2(((threadID.xy / float2(width, height)) * 2) - 1);
 	float2 uv = float2((threadID.xy + float2(0.5f, 0.5f)) / float2(width, height) * 2.0f - 1.0f);
-	
-
 	float3 diraction = initPixelPos(uv, cameraAngle, 1, 1);
 	Result[threadID.xy] = float4((ray[threadID.x + threadID.y * width].result + Result[threadID.xy].xyz * (samplesCount - 1)) / samplesCount, Result[threadID.xy].w);
 	ray[threadID.x + threadID.y * width] = InitRay(normalize(diraction), cameraPos);
-
 }
