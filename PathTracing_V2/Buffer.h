@@ -3,6 +3,11 @@
 class Buffer
 {
 public:
+	enum class BufferType
+	{
+		STRUCTURED_BUFFER = 0,
+		TEXTURE2D = 1
+	};
 	Buffer();
 	~Buffer();
 	Buffer(ID3D11Device* device, void* pData, UINT ByteWidth, UINT StructureByteStride, D3D11_USAGE Usage, UINT BindFlags, UINT CPUAccessFlags, UINT MiscFlags);
@@ -11,5 +16,6 @@ public:
 	void InitBuffer_UAV(ID3D11Device* device, void* pData, UINT ByteWidth, UINT StructureByteStride, UINT CPUAccessFlags, D3D11_USAGE Usage);
 	void InitBuffer_SRV(ID3D11Device* device, void* pData, UINT ByteWidth, UINT StructureByteStride, UINT CPUAccessFlags, D3D11_USAGE Usage);
 	ID3D11Buffer* pBuf;
+	BufferType bufferType;
 };
 

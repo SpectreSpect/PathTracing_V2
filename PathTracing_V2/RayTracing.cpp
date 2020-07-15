@@ -68,9 +68,9 @@ void RayTracing::InitStructuredBuffer()
 	const unsigned int MeshObjectsCount = 1;
 	MeshObj meshObjects[MeshObjectsCount]
 	{ 0, figure->meshes[0].indexBuffer.indecesCount };
-	HCheck(meshes.InitSBuffer(DX::device, sizeof(MeshObj), sizeof(MeshObj) * MeshObjectsCount), L"meshes.InitSBuffer() was failed", L"RayTracing");
-	HCheck(vertices.InitSBuffer(DX::device, sizeof(Vertex), sizeof(Vertex) * figure->meshes[0].vertexBuffer.verticesCount),L"vertices.InitSBuffer() was failed", L"RayTracing" );
-	HCheck(indices.InitSBuffer(DX::device, sizeof(int), sizeof(int) * figure->meshes[0].indexBuffer.indecesCount), L"indices.InitSBuffer() was failed", L"RayTracing");
+	HCheck(meshes.InitSBuffer(DX::device, nullptr, sizeof(MeshObj), sizeof(MeshObj) * MeshObjectsCount), L"meshes.InitSBuffer() was failed", L"RayTracing");
+	HCheck(vertices.InitSBuffer(DX::device, nullptr, sizeof(Vertex), sizeof(Vertex) * figure->meshes[0].vertexBuffer.verticesCount),L"vertices.InitSBuffer() was failed", L"RayTracing" );
+	HCheck(indices.InitSBuffer(DX::device, nullptr, sizeof(int), sizeof(int) * figure->meshes[0].indexBuffer.indecesCount), L"indices.InitSBuffer() was failed", L"RayTracing");
 
 	HCheck(meshes.UploadData(DX::deviceCon, meshObjects, sizeof(MeshObj) * MeshObjectsCount), L"meshes.UploadData() was failed", L"RayTracing");
 	HCheck(vertices.UploadData(DX::deviceCon, figure->meshes[0].vertexBuffer.pSysMem, sizeof(Vertex) * figure->meshes[0].vertexBuffer.verticesCount), L"vertices.UploadData was failed", L"RayTracing");
