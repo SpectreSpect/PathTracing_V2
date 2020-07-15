@@ -1,9 +1,11 @@
 #pragma once
 #include <d3d11.h>
-class SRV 
+#include "StructuredBuffer.h"
+class SRV
 {
 public:
 	SRV();
-	//void Init_Buffered();
+	~SRV();
+	HRESULT Init(ID3D11Device* device, Buffer* buffer);
 	ID3D11ShaderResourceView* pSRV;
 };

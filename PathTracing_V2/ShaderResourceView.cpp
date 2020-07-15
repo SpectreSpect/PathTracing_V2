@@ -76,10 +76,6 @@ void ShaderResourceView::LoadData(const wchar_t* path, ID3D11Resource* resource)
 	}
 }
 
-void ShaderResourceView::Set(UINT startSlot, UINT NumViews)
-{
-	DX::deviceCon->PSSetShaderResources(startSlot, NumViews, &shaderResourceView);
-}
 
 void ShaderResourceView::LoadToShaderResource(ID3D11ShaderResourceView** pShaderResource, const wchar_t* path)
 {

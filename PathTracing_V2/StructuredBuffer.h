@@ -16,5 +16,11 @@ public:
 
 	HRESULT Init_Test(ID3D11Device* device, void* pData, UINT StructureByteStride, UINT ByteWidth, UINT BindFlags, UINT CPUAccessFlags, D3D11_USAGE Usage);
 	ID3D11Buffer* pBuf_test = nullptr;
+	UINT ElementWidth;
+	UINT NumElements;
+	UINT FirstElement;
+	UINT ElementOffset;
+
+
 };
 

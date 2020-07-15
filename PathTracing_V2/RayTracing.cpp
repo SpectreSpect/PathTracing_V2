@@ -68,9 +68,14 @@ void RayTracing::InitStructuredBuffer()
 	const unsigned int MeshObjectsCount = 1;
 	MeshObj meshObjects[MeshObjectsCount]
 	{ 0, figure->meshes[0].indexBuffer.indecesCount };
-	HCheck(meshes.InitSBuffer(DX::device, nullptr, sizeof(MeshObj), sizeof(MeshObj) * MeshObjectsCount), L"meshes.InitSBuffer() was failed", L"RayTracing");
-	HCheck(vertices.InitSBuffer(DX::device, nullptr, sizeof(Vertex), sizeof(Vertex) * figure->meshes[0].vertexBuffer.verticesCount),L"vertices.InitSBuffer() was failed", L"RayTracing" );
-	HCheck(indices.InitSBuffer(DX::device, nullptr, sizeof(int), sizeof(int) * figure->meshes[0].indexBuffer.indecesCount), L"indices.InitSBuffer() was failed", L"RayTracing");
+	HCheck(meshes.Init_Test(DX::device, nullptr, sizeof(MeshObj), sizeof(MeshObj) * MeshObjectsCount, 
+							D3D11_BIND_SHADER_RESOURCE, D3D11_CPU_ACCESS_WRITE, D3D11_USAGE_DYNAMIC), L"meshes.InitSBuffer() was failed", L"RayTracing");
+
+	HCheck(vertices.Init_Test(DX::device, nullptr, sizeof(Vertex), sizeof(Vertex) * figure->meshes[0].vertexBuffer.verticesCount, 
+							  D3D11_BIND_SHADER_RESOURCE, D3D11_CPU_ACCESS_WRITE, D3D11_USAGE_DYNAMIC),L"vertices.InitSBuffer() was failed", L"RayTracing" );
+
+	HCheck(indices.Init_Test(DX::device, nullptr, sizeof(int), sizeof(int) * figure->meshes[0].indexBuffer.indecesCount,
+							 D3D11_BIND_SHADER_RESOURCE, D3D11_CPU_ACCESS_WRITE, D3D11_USAGE_DYNAMIC), L"indices.InitSBuffer() was failed", L"RayTracing");
 
 	HCheck(meshes.UploadData(DX::deviceCon, meshObjects, sizeof(MeshObj) * MeshObjectsCount), L"meshes.UploadData() was failed", L"RayTracing");
 	HCheck(vertices.UploadData(DX::deviceCon, figure->meshes[0].vertexBuffer.pSysMem, sizeof(Vertex) * figure->meshes[0].vertexBuffer.verticesCount), L"vertices.UploadData was failed", L"RayTracing");
@@ -163,7 +168,7 @@ void RayTracing::LoadTextures()
 
 void RayTracing::SetTextures()
 {
-	HDRshaderResource->Set(1, 1);
+	DX::deviceCon->PSSetShaderResources(1, 1, &HDRshaderResource->shaderResourceView);
 	DX::deviceCon->PSSetShaderResources(2, 1, &shaderResources[0]);
 	DX::deviceCon->PSSetShaderResources(3, 1, &shaderResources[1]);
 	DX::deviceCon->PSSetShaderResources(4, 1, &shaderResources[2]);

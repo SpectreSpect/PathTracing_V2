@@ -21,10 +21,10 @@ HRESULT StructuredBuffer::InitSBShaderResource(ID3D11Device* device, const UINT 
 	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
 	shaderResourceViewDesc.Format = DXGI_FORMAT_UNKNOWN;
 	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-	shaderResourceViewDesc.Buffer.ElementOffset = ElementOffset;
-	shaderResourceViewDesc.Buffer.ElementWidth = ElementWidth;
-	shaderResourceViewDesc.Buffer.FirstElement = FirstElement;
-	shaderResourceViewDesc.Buffer.NumElements = NumElements;
+	shaderResourceViewDesc.Buffer.ElementOffset = this->ElementOffset = ElementOffset;
+	shaderResourceViewDesc.Buffer.ElementWidth = this->ElementWidth = ElementWidth;
+	shaderResourceViewDesc.Buffer.FirstElement = this->FirstElement = FirstElement;
+	shaderResourceViewDesc.Buffer.NumElements = this->NumElements = NumElements;
 	HRESULT hr = device->CreateShaderResourceView(pBuf_test, &shaderResourceViewDesc, &pSBShaderResource);
 	return hr;
 }

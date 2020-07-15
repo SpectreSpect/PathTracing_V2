@@ -32,9 +32,11 @@ public:
 	ID3D11RenderTargetView* textureRenderTarget[2]; // 2 рендер торгета для текстур, для того чтобы в них можно было рендерить
 	ID3D11ShaderResourceView* shaderResourceView[2]; // 2 шейдер ресурса, для того, чтобы их можно было использовать как ресурс в шейдере
 	ID3D11UnorderedAccessView* pStructuredBufferUAV;
+
 	StructuredBuffer meshes;
 	StructuredBuffer vertices;
 	StructuredBuffer indices;
+
 	Shader* shaderRayTracing;
 	Shader* shaderTexturing;
 	BOOL textureQueue;
