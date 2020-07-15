@@ -8,6 +8,7 @@ VertexBuffer::VertexBuffer()
 
 VertexBuffer::VertexBuffer(void* pSysMem, UINT ByteWidth, UINT verticesCount, D3D11_USAGE Usage, UINT CPUAccessFlags)
 {
+	pVertexBuffer = nullptr;
 	Init(pSysMem, ByteWidth, verticesCount, Usage, CPUAccessFlags);
 }
 
@@ -18,6 +19,7 @@ VertexBuffer::~VertexBuffer()
 
 void VertexBuffer::Release()
 {
+	pVertexBuffer = nullptr;
 	if (pVertexBuffer != nullptr)
 		pVertexBuffer->Release();
 }

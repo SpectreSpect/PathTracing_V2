@@ -739,8 +739,8 @@ Hit Trace(Ray ray, inout float seed)
 	Hit hit = InitHit();
 	//if (IntersectCube(ray, hit, float3(-1, -1, -1), float3(1, 1, 1), 0.8f))
 	float somet = 0;
-	if (IntersectCubeBase(ray, float3(-1, -1, -1), float3(1, 1.7f, 1), 2, somet))
-		IntersectMesh(ray, hit, 0);
+	//if (IntersectCubeBase(ray, float3(-1, -1, -1), float3(1, 1.7f, 1), 2, somet))
+	//	IntersectMesh(ray, hit, 0);
 	IntersectSphere(ray, hit, sphere1Pos + float3(-5, 6, 0), 2, 1, 3);
 	IntersectSphere(ray, hit, float3(0, 0, 2), 0.5f, 0, 0, 0, 0, float4(1, 1, 1, 2));
 	//CheckIntersection(ray, hit, float3(1, 1, 1), 20);

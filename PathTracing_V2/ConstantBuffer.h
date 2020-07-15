@@ -1,21 +1,21 @@
 #pragma once
 #include <d3d11.h>
-class Shader;
-class ConstantBuffer
+#include "DX.h"
+#include "Buffer.h"
+class ConstantBuffer : public Buffer
 {
 public:
-	ConstantBuffer(const void* pSysMem, UINT ByteWidth, D3D11_USAGE Usage = D3D11_USAGE_DYNAMIC, UINT CPUAccessFlags = D3D11_CPU_ACCESS_WRITE);
+	ConstantBuffer();
+	ConstantBuffer(ID3D11Device* device, const void* pSysMem, const UINT ByteWidth, const D3D11_USAGE Usage = D3D11_USAGE_DYNAMIC, const UINT CPUAccessFlags = D3D11_CPU_ACCESS_WRITE);
 	~ConstantBuffer();
-	void Release();
-	void LoadData(const void* pSysMem, UINT ByteWidth, D3D11_USAGE Usage = D3D11_USAGE_DYNAMIC, UINT CPUAccessFlags = D3D11_CPU_ACCESS_WRITE);
-	void Set(UINT StartSlot = 0, UINT NumBuffers = 1);
 	void Map(D3D11_MAP MapType = D3D11_MAP_WRITE_DISCARD);
 	size_t CopyMem(const void* data, size_t dataSize, size_t offset = 0);
 	void UnMap();
-	ID3D11Buffer* pConstantBuffer;
-	size_t currentOffset;
+	HRESULT Init(ID3D11Device* device, const void* pData, const UINT ByteWidth, const D3D11_USAGE Usage = D3D11_USAGE_DYNAMIC, const UINT CPUAccessFlags = D3D11_CPU_ACCESS_WRITE);
+	ID3D11Buffer* pBuf;
+
 private:
-	BOOL mapped;
-	D3D11_MAPPED_SUBRESOURCE mappedSub;
+	size_t currentOffset;
+	void* mappedAddress;
 };
 

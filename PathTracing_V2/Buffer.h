@@ -6,7 +6,8 @@ public:
 	enum class BufferType
 	{
 		STRUCTURED_BUFFER = 0,
-		TEXTURE2D = 1
+		TEXTURE2D = 1,
+		CONSTANT_BUFFER = 2
 	};
 	Buffer();
 	~Buffer();

@@ -4,7 +4,7 @@ Camera::Camera(ID3D11Device* device, const float2 resolution)
 {
 	//type = RTObjectType::Camera;
 	int size_ConstBuf = multipleTo(sizeof(oldCameraPos) + sizeof(cameraAngle), 16);
-	cameraData_constBuf = new ConstantBuffer(malloc(size_ConstBuf), size_ConstBuf);
+	cameraData_constBuf.Init(device, malloc(size_ConstBuf), size_ConstBuf);
 	for (int i = 0; i < 2; i++) 
 	{
 		D3D11_TEXTURE2D_DESC textureDesc{};
@@ -46,7 +46,6 @@ Camera::~Camera()
 		swap_renderTarget[i]->Release();
 		swap_shaderResource[i]->Release();
 	}
-	delete cameraData_constBuf;
 }
 void Camera::Set(ID3D11DeviceContext* deviceCon, UINT FirstSlot_shaderResource)
 {
@@ -144,14 +143,14 @@ bool Camera::CommitÑhanges()
 
 void Camera::Upload_ConstBuffer()
 {
-	cameraData_constBuf->Map();
-	size_t lastSize = cameraData_constBuf->CopyMem(&cameraPos, sizeof(cameraPos));
-	lastSize = cameraData_constBuf->CopyMem(&cameraAngle, sizeof(cameraAngle), lastSize);
-	cameraData_constBuf->UnMap();
+	cameraData_constBuf.Map();
+	size_t lastSize = cameraData_constBuf.CopyMem(&cameraPos, sizeof(cameraPos));
+	lastSize = cameraData_constBuf.CopyMem(&cameraAngle, sizeof(cameraAngle), lastSize);
+	cameraData_constBuf.UnMap();
 }
 
 void Camera::Set_ConstBuffer(ID3D11DeviceContext* deviceCon, UINT StartSlot, UINT NumBuffers)
 {
-	deviceCon->PSSetConstantBuffers(StartSlot, NumBuffers, &cameraData_constBuf->pConstantBuffer);
+	deviceCon->PSSetConstantBuffers(StartSlot, NumBuffers, &cameraData_constBuf.pBuf);
 }
 

@@ -21,10 +21,10 @@ public:
 		float indecesCount;
 	};
 	Camera* camera;
-	ConstantBuffer* constantBuffer;
+	ConstantBuffer constantBuffer;
 	VertexBuffer* vertexBuffer;
 	IndexBuffer* indexBuffer;
-	ConstantBuffer* cModelBuffer;
+	ConstantBuffer cModelBuffer;
 	SamplerState* samplerState;
 	ShaderResourceView* HDRshaderResource;
 	ID3D11ShaderResourceView* shaderResources[7];

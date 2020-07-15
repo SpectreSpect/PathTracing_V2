@@ -50,6 +50,7 @@
     <ClCompile Include="TestingComputeShader.cpp" />
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="UAV.cpp" />
     <ClCompile Include="UnorderedAccessView.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
@@ -94,6 +95,7 @@
     <ClInclude Include="TestingComputeShader.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="UAV.h" />
     <ClInclude Include="UnorderedAccessView.h" />
     <ClInclude Include="Vector4.h" />
     <ClInclude Include="Vertex.h" />

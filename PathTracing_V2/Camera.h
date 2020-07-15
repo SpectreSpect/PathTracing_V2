@@ -20,7 +20,7 @@ public:
 	float2 cameraAngle;
 	ID3D11ShaderResourceView* screen_shaderResource;
 	float speed = 0.006f;
-	ConstantBuffer* cameraData_constBuf;
+	ConstantBuffer cameraData_constBuf;
 private:
 	float3 oldCameraPos;
 	float2 oldCameraAngle;

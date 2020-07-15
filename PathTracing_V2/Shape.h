@@ -19,7 +19,7 @@ public:
 	Shader* shader = new DefaultShader();
 	VertexBuffer* vertexBuffer;
 	IndexBuffer* indexBuffer;
-	ConstantBuffer* constantBuffer;
+	ConstantBuffer constantBuffer;
 	ID3D11ShaderResourceView* resourceView;
 	ID3D11SamplerState* sampler;
 	D3D11_PRIMITIVE_TOPOLOGY primitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;

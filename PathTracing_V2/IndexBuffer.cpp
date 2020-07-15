@@ -3,10 +3,12 @@
 
 IndexBuffer::IndexBuffer()
 {
+	pIndexBuffer = nullptr;
 }
 
 IndexBuffer::IndexBuffer(void* pSysMem, UINT ByteWidth, UINT indecesCount, D3D11_USAGE Usage, UINT CPUAccessFlags)
 {
+	pIndexBuffer = nullptr;
 	LoadData(pSysMem, ByteWidth, indecesCount, Usage, CPUAccessFlags);
 }
 
@@ -17,7 +19,8 @@ IndexBuffer::~IndexBuffer()
 
 void IndexBuffer::Release()
 {
-	if (pIndexBuffer != nullptr)
+	pIndexBuffer = nullptr;
+	if (pIndexBuffer)
 		pIndexBuffer->Release();
 }
 

@@ -26,7 +26,7 @@ RayTracing::RayTracing()
 	shaderTexturing = new ShaderTexturing();
 
 	FLOAT constantData[44];
-	constantBuffer = new ConstantBuffer(constantData, sizeof(constantData));
+	constantBuffer.Init(DX::device, constantData, sizeof(constantData));
 	InitStructuredBuffer();
 	samplerState = new SamplerState();
 	InitShaderResource();
@@ -48,7 +48,6 @@ RayTracing::~RayTracing()
 {
 	delete figure;
 	delete cModelBufferData;
-	delete cModelBuffer;
 	delete samplerState;
 	delete HDRshaderResource;
 	for (int i = 0; i < 7; i++)
@@ -134,19 +133,19 @@ void RayTracing::CorrectScreenResolution()
 void RayTracing::setConstantData()
 {
 	size_t lastSize;
-	constantBuffer->Map();
-	lastSize = constantBuffer->CopyMem(&position, sizeof(position));
-	lastSize = constantBuffer->CopyMem(&sphere1Pos, sizeof(sphere1Pos), lastSize);
-	lastSize = constantBuffer->CopyMem(&k, sizeof(k), lastSize);
-	lastSize = constantBuffer->CopyMem(&screenResolution, sizeof(screenResolution), lastSize);
-	lastSize = constantBuffer->CopyMem(&cameraPos, sizeof(cameraPos), lastSize);
-	lastSize = constantBuffer->CopyMem(&cameraAngle, sizeof(cameraAngle), lastSize);
-	lastSize = constantBuffer->CopyMem(&randomValue, sizeof(randomValue), lastSize);
-	lastSize = constantBuffer->CopyMem(&random1Value, sizeof(random1Value), lastSize);
-	lastSize = constantBuffer->CopyMem(&samplesCount, sizeof(samplesCount), lastSize);
-	lastSize = constantBuffer->CopyMem(&velocity, sizeof(velocity), lastSize);
-	lastSize = constantBuffer->CopyMem(&circlePos, sizeof(circlePos), lastSize);
-	constantBuffer->UnMap();
+	constantBuffer.Map();
+	lastSize = constantBuffer.CopyMem(&position, sizeof(position));
+	lastSize = constantBuffer.CopyMem(&sphere1Pos, sizeof(sphere1Pos), lastSize);
+	lastSize = constantBuffer.CopyMem(&k, sizeof(k), lastSize);
+	lastSize = constantBuffer.CopyMem(&screenResolution, sizeof(screenResolution), lastSize);
+	lastSize = constantBuffer.CopyMem(&cameraPos, sizeof(cameraPos), lastSize);
+	lastSize = constantBuffer.CopyMem(&cameraAngle, sizeof(cameraAngle), lastSize);
+	lastSize = constantBuffer.CopyMem(&randomValue, sizeof(randomValue), lastSize);
+	lastSize = constantBuffer.CopyMem(&random1Value, sizeof(random1Value), lastSize);
+	lastSize = constantBuffer.CopyMem(&samplesCount, sizeof(samplesCount), lastSize);
+	lastSize = constantBuffer.CopyMem(&velocity, sizeof(velocity), lastSize);
+	lastSize = constantBuffer.CopyMem(&circlePos, sizeof(circlePos), lastSize);
+	constantBuffer.UnMap();
 }
 
 void RayTracing::ClearFrame()
@@ -386,7 +385,7 @@ void RayTracing::Draw()
 	setConstantData();
 	samplerState->Set(0, 1);
 	SetTextures();
-	DX::deviceCon->PSSetConstantBuffers(0, 1, &camera->cameraData_constBuf->pConstantBuffer);
+	DX::deviceCon->PSSetConstantBuffers(0, 1, &camera->cameraData_constBuf.pBuf);
 	UINT initCount = -1;
 	DX::deviceCon->PSSetShaderResources(0, 1, &shaderResourceView[!textureQueue]);
 	DX::deviceCon->PSSetShaderResources(50, 1, &meshes_SRV.pSRV);
@@ -395,7 +394,7 @@ void RayTracing::Draw()
 
 
 	//Draw(shaderRayTracing);
-	constantBuffer->Set(1, 1);
+	DX::deviceCon->PSSetConstantBuffers(1, 1, &constantBuffer.pBuf);
 	shaderRayTracing->SetShaders();
 	DX::deviceCon->IASetIndexBuffer(indexBuffer->pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
 	DX::deviceCon->IASetVertexBuffers(0, 1, &vertexBuffer->pVertexBuffer, &vertexBuffer->vertexSize, &shaderRayTracing->offset);
@@ -405,7 +404,7 @@ void RayTracing::Draw()
 	//Draw(shaderTexturing);
 	DX::deviceCon->OMSetRenderTargets(1, &DX::backRenderTargetView, NULL);
 	shaderTexturing->SetShaders();
-	constantBuffer->Set(1, 1);
+	DX::deviceCon->PSSetConstantBuffers(1, 1, &constantBuffer.pBuf);
 	samplerState->Set(0, 1);
 	DX::deviceCon->PSSetShaderResources(0, 1, &shaderResourceView[textureQueue]);
 	DX::deviceCon->IASetIndexBuffer(indexBuffer->pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);

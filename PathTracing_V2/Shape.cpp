@@ -24,7 +24,7 @@ Shape::Shape()
 	vertexBuffer = new VertexBuffer(vertices, sizeof(vertices), 4);
 
 	FLOAT constantData[4];
-	constantBuffer = new ConstantBuffer(constantData, sizeof(constantData));
+	constantBuffer.Init(DX::device, constantData, sizeof(constantData));
 	renderTarget = new RenderTarget(DX::screenResolutionWidth, DX::screenResolutionHeight);
 }
 
@@ -32,13 +32,11 @@ Shape::~Shape()
 {
 	delete vertexBuffer;
 	delete shader;
-	delete indexBuffer;
-	delete constantBuffer;
-}
+	delete indexBuffer;}
 void Shape::Draw()
 {
 
-	constantBuffer->Set(0, 1);
+	DX::deviceCon->PSSetConstantBuffers(0, 1, &constantBuffer.pBuf);
 	shader->SetShaders();
 	if (indexed == TRUE)
 		DX::deviceCon->IASetIndexBuffer(indexBuffer->pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
@@ -53,7 +51,7 @@ void Shape::Draw()
 
 void Shape::Draw(Shader* shader)
 {
-	constantBuffer->Set(0, 1);
+	DX::deviceCon->PSSetConstantBuffers(0, 1, &constantBuffer.pBuf);
 	shader->SetShaders();
 	if (indexed == TRUE)
 		DX::deviceCon->IASetIndexBuffer(indexBuffer->pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
