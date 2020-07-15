@@ -138,7 +138,7 @@ void SwapMore3(inout float3 a,inout float3 b)
 
 	float rand_1_05
 	()
-{
+	{
 		float2 noise = (frac(sin(dot(_PixelPos.xy, float2(12.9898, 78.233) * 2.0 - _Seed)) * 43758.5453 + _Seed / 3));
 		_Seed += _Seed1;
 		return abs(noise.x + noise.y) * 0.5;
@@ -239,10 +239,7 @@ float3x3 GetTangentSpace
 
 float3 SampleHemisphere(float3 normal, float alpha)
 {
-	//float cosTheta = rand();
-	//float cosTheta =  pow(rand(), 1.0f / (alpha + 1.0f));
 	float cosTheta = pow(1 - rand(), 1 / (alpha + 1.0f));
-	//float sinTheta = sqrt(max(0.0f, 1.0f - cosTheta * cosTheta));
 	float sinTheta = sqrt(1.0f - cosTheta * cosTheta);
 	float phi = 2 * PI * rand();
 	float3 tangentSpaceDir = float3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
@@ -817,19 +814,12 @@ Hit Trace(Ray ray, inout float seed)
 		float k = 1 - eta * eta * (1 - cosi * cosi);
 		return k < 0 ? 0 : eta * incedent + (eta * cosi - sqrt(k)) * n;
 	}
-	float3 Albedo
-
-	(inout
-	Ray ray, Hit
-
-	hit,
-
-	float chance, float bias)
+float3 Albedo(inout Ray ray, Hit hit, float chance, float bias)
 {
 		ray.origin = hit.position + hit.normal * bias;
 		ray.direction = SampleHemisphere(hit.normal, 1);
 		return ((1.0f / chance) * hit.albedo);
-	}
+}
 	float3 Specular
 
 	(inout

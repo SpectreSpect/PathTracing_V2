@@ -57,8 +57,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	//RayTracing rayTracing;
 	//NewRayTracing newRayTracing(DX::device, objects, DX::screenResolutionWidth, DX::screenResolutionHeight);
 	std::vector<Object_PT*> objects;
-	Sphere_PT someSphere(objects, 0.5f, float3{ -1, 0, 2 }, float3{0.4f, 0.7f, 1});
-	Sphere_PT someSphere1(objects, 0.5f, float3{ 1, 2, 5 }, float3{1, 0, 0.5f});
+	Sphere_PT someSphere(objects, 0.5f, float3{ -0.7f, 0, 1 }, float4{0.4f, 0.7f, 1, 1});
+	Sphere_PT someSphere1(objects, 0.5f, float3{ 0, 2, 3 }, float4{1, 0, 0.5f, 1});
 	TestingComputeShader test(DX::device, objects);
 	while (DX::ApplicationRun == TRUE)
 	{

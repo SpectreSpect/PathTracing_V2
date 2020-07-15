@@ -34,6 +34,13 @@ size_t ConstantBuffer::CopyMem(const void* data, size_t dataSize, size_t offset)
 	return currentOffset;
 }
 
+void ConstantBuffer::CopyMemOnce(const void* data, const size_t dataSize)
+{
+	Map();
+	memcpy(mappedAddress, data, dataSize);
+	UnMap();
+}
+
 void ConstantBuffer::UnMap()
 {
 	DX::deviceCon->Unmap(pBuf, 0);

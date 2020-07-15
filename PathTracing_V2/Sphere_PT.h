@@ -5,7 +5,7 @@
 class Sphere_PT : public Object_PT
 {
 public:
-	Sphere_PT(std::vector<Object_PT*>& objectsArray, float radius = 0, float3 position = { 0, 0, 0 }, float3 albedo = { 0, 0, 0 });
+	Sphere_PT(std::vector<Object_PT*>& objectsArray, float radius = 0, float3 position = {}, float4 albedo = {}, float4 emission = {});
 	struct SpherePrimitive
 	{
 		float3 position;
@@ -14,5 +14,4 @@ public:
 	};
 	float3 position;
 	float radius;
-	float3 albedo;
 };

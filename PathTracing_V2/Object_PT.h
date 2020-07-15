@@ -12,5 +12,7 @@ public:
 		Camera = 2
 	};
 	ObjectType_PT type;
+	float4 albedo;
+	float4 emission;
 };
 

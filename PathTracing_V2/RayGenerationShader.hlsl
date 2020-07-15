@@ -17,6 +17,7 @@ struct Ray
 RWTexture2D<float4> Result : register(u0);
 RWStructuredBuffer<Ray> ray : register(u1);
 
+
 Ray InitRay(float3 direction, float3 origin)
 {
 	Ray ray;
@@ -42,8 +43,9 @@ void main(uint3 threadID : SV_DispatchThreadID)
 {
 	uint width, height;
 	Result.GetDimensions(width, height);
-	//float2 uv = float2(((threadID.xy / float2(width, height)) * 2) - 1);
-	float2 uv = float2((threadID.xy + float2(0.5f, 0.5f)) / float2(width, height) * 2.0f - 1.0f);
+	float2 uv = float2(((threadID.xy / float2(width, height)) * 2) - 1);
+	//float2 uv = float2((threadID.xy + float2(0.5f, 0.5f)) / float2(width, height) * 2.0f - 1.0f);
+	uv = float2(uv.x, -uv.y);
 	float3 diraction = initPixelPos(uv, cameraAngle, 1, 1);
 	Result[threadID.xy] = float4((ray[threadID.x + threadID.y * width].result + Result[threadID.xy].xyz * (samplesCount - 1)) / samplesCount, Result[threadID.xy].w);
 	ray[threadID.x + threadID.y * width] = InitRay(normalize(diraction), cameraPos);

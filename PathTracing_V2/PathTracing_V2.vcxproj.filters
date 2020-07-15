@@ -252,5 +252,6 @@
     <FxCompile Include="PSDefault.hlsl" />
     <FxCompile Include="RayGenerationShader.hlsl" />
     <FxCompile Include="IntersectionShader.hlsl" />
+    <FxCompile Include="Clossest_HitShader.hlsl" />
   </ItemGroup>
 </Project>

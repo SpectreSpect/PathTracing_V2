@@ -1,7 +1,7 @@
 
 struct SpherePrimetive
 {
-	float3 spherePos;
+	float3 position;
 	float radius;
 	int objID;
 };
@@ -13,11 +13,14 @@ struct Ray
 	float3 energy;
 	float3 result;
 };
-class Hit
+struct Hit
 {
-	float t;
 	float3 position;
+	float t;
 	float3 normal;
+	int objID;
+	float padding[3];
+	int primitiveID;
 };
 Hit InitHit()
 {
@@ -25,6 +28,10 @@ Hit InitHit()
 	hit.t = 1.#INF;
 	hit.position = 0;
 	hit.normal = 0;
+	hit.objID = 0;
+	hit.primitiveID = 0;
+	for (int i = 0; i < 3; i++)
+		hit.padding[i] = 0;
 	return hit;
 }
 cbuffer PrimetivesCount
@@ -34,14 +41,16 @@ cbuffer PrimetivesCount
 	int padding[2];
 }
 RWTexture2D<float4> Result : register(u0);
+RWStructuredBuffer<Hit> hit : register(u1);
 StructuredBuffer<SpherePrimetive> spherePrimetives : register(t0);
 StructuredBuffer<Ray> ray : register(t1);
 
-void IntersectSphere(Ray ray, inout Hit bestHit, float3 spherePos, float radius)
+void IntersectSphere(Ray ray, inout Hit bestHit, SpherePrimetive sphere, int primitiveID)
 {
-	float3 d = ray.origin - spherePos;
+	//bestHit.objID = -1;
+	float3 d = ray.origin - sphere.position;
 	float p1 = -dot(ray.direction, d);
-	float p2sqr = p1 * p1 - dot(d, d) + radius * radius;
+	float p2sqr = p1 * p1 - dot(d, d) + sphere.radius * sphere.radius;
 	if (p2sqr < 0)
 		return;
 	float p2 = sqrt(p2sqr);
@@ -50,7 +59,9 @@ void IntersectSphere(Ray ray, inout Hit bestHit, float3 spherePos, float radius)
 	{
 		bestHit.t = t;
 		bestHit.position = (t * ray.direction) + ray.origin;
-		bestHit.normal = normalize(bestHit.position - spherePos);
+		bestHit.normal = normalize(bestHit.position - sphere.position);
+		bestHit.objID = sphere.objID;
+		bestHit.primitiveID = primitiveID;
 		return;
 	}
 }
@@ -61,10 +72,10 @@ void main(uint3 threadID : SV_DispatchThreadID)
 	uint width, height;
 	Result.GetDimensions(width, height);
 	uint rayID = threadID.x + threadID.y * width;
-	Hit hit = InitHit();
-	for (int i = 0; i < 2; i++)
+	hit[rayID] = InitHit();
+	for (int i = 0; i < nSpheres; i++)
 	{
-		IntersectSphere(ray[rayID], hit, spherePrimetives[i].spherePos, spherePrimetives[i].radius);
+		IntersectSphere(ray[rayID], hit[rayID], spherePrimetives[i], i);
 	}
-		Result[threadID.xy] = float4(float3(0, 1, 1) / hit.t, 1);
-	}
+	//Result[threadID.xy] = float4(float3(0, 1, 1) / hit[rayID].t, 1);
+}
