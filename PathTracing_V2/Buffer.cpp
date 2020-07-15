@@ -2,17 +2,34 @@
 
 Buffer::Buffer()
 {
-	pBuffer = nullptr;
+	pBuf = nullptr;
 }
 
 Buffer::~Buffer()
 {
-	if (pBuffer)
-		pBuffer->Release();
+	if (pBuf)
+		pBuf->Release();
 }
 
-Buffer::Buffer(ID3D11Device* device, void* pData, UINT ByteWidth, D3D11_USAGE Usage, UINT BindFlags, UINT CPUAccessFlags, UINT MiscFlags, UINT StructureByteStride)
+Buffer::Buffer(ID3D11Device* device, void* pData, UINT ByteWidth, UINT StructureByteStride, D3D11_USAGE Usage, UINT BindFlags, UINT CPUAccessFlags, UINT MiscFlags)
 {
+
+	if (pData != nullptr) 
+	{
+		if(FAILED(InitBuffer(device, pData, ByteWidth, StructureByteStride, Usage, BindFlags, CPUAccessFlags, MiscFlags)))
+		MessageBox(nullptr, L"CreateBuffer() with pSysMem is failed", L"Buffer::Buffer()", MB_ICONERROR);
+	}
+	else
+	{
+		if (FAILED(InitBuffer(device, pData, ByteWidth, StructureByteStride, Usage, BindFlags, CPUAccessFlags, MiscFlags)))
+			MessageBox(nullptr, L"CreateBuffer() is failed", L"Buffer::Buffer()", MB_ICONERROR);
+	}
+}
+
+HRESULT Buffer::InitBuffer(ID3D11Device* device, void* pData, UINT ByteWidth, UINT StructureByteStride, D3D11_USAGE Usage, UINT BindFlags, UINT CPUAccessFlags, UINT MiscFlags)
+{
+	if (pBuf)
+		pBuf->Release();
 	D3D11_BUFFER_DESC bufferDesc{};
 	bufferDesc.ByteWidth = ByteWidth;
 	bufferDesc.Usage = Usage;
@@ -20,27 +37,70 @@ Buffer::Buffer(ID3D11Device* device, void* pData, UINT ByteWidth, D3D11_USAGE Us
 	bufferDesc.CPUAccessFlags = CPUAccessFlags;
 	bufferDesc.MiscFlags = MiscFlags;
 	bufferDesc.StructureByteStride = StructureByteStride;
-	D3D11_SUBRESOURCE_DATA subData{};
-	subData.pSysMem = pData;
-	if (FAILED(device->CreateBuffer(&bufferDesc, &subData, &pBuffer)))
-		MessageBox(nullptr, L"CreateBuffer() is failed", L"Buffer::Buffer()", MB_ICONERROR);
+	if (pData != nullptr)
+	{
+		D3D11_SUBRESOURCE_DATA subData{};
+		subData.pSysMem = pData;
+		return device->CreateBuffer(&bufferDesc, &subData, &pBuf);
+	}
+	else
+	{
+		return device->CreateBuffer(&bufferDesc, 0, &pBuf);
+	}
 }
 
-void Buffer::InitBuffer_UAV(ID3D11Device* device, void* pData, UINT ByteWidth, UINT StructureByteStride)
-{
-	CD3D11_BUFFER_DESC bufferDesc{};
-	bufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
-	bufferDesc.ByteWidth = ByteWidth;
-	bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-	bufferDesc.StructureByteStride = StructureByteStride;
-	D3D11_SUBRESOURCE_DATA subData{};
-	subData.pSysMem = pData;
-	if (FAILED(device->CreateBuffer(&bufferDesc, &subData, &pBuffer)))
-		MessageBox(nullptr, L"CreateBuffer() is failed", L"UnorderedAccessView::Init()", MB_ICONERROR);
-}
-
-void Buffer::InitBuffer_SRV(ID3D11Device* device, void* pData, UINT ByteWidth, UINT StructureByteStride)
+void Buffer::InitBuffer_UAVorSRV(ID3D11Device* device, void* pData, UINT ByteWidth, UINT StructureByteStride, UINT CPUAccessFlags, D3D11_USAGE Usage)
 {
 
+	if (pData) 
+	{
+		if (FAILED(InitBuffer(device, pData, ByteWidth, StructureByteStride, Usage, 
+				              D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE, 
+			                  CPUAccessFlags, D3D11_RESOURCE_MISC_BUFFER_STRUCTURED)))
+			MessageBox(nullptr, L"CreateBuffer() with pSysData is failed", L"UnorderedAccessView::InitBuffer_UAV()", MB_ICONERROR);
+	}
+	else 
+	{
+		if (FAILED(InitBuffer(device, pData, ByteWidth, StructureByteStride, Usage,
+			D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE,
+			CPUAccessFlags, D3D11_RESOURCE_MISC_BUFFER_STRUCTURED)))
+			MessageBox(nullptr, L"CreateBuffer()  is failed", L"UnorderedAccessView::InitBuffer_UAV()", MB_ICONERROR);
+	}
+
 }
 
+void Buffer::InitBuffer_UAV(ID3D11Device* device, void* pData, UINT ByteWidth, UINT StructureByteStride, UINT CPUAccessFlags, D3D11_USAGE Usage)
+{
+	if (pData)
+	{
+		if (FAILED(InitBuffer(device, pData, ByteWidth, StructureByteStride, Usage,
+			D3D11_BIND_UNORDERED_ACCESS,
+			CPUAccessFlags, D3D11_RESOURCE_MISC_BUFFER_STRUCTURED)))
+			MessageBox(nullptr, L"CreateBuffer() with pSysData is failed", L"UnorderedAccessView::InitBuffer_UAV()", MB_ICONERROR);
+	}
+	else
+	{
+		if (FAILED(InitBuffer(device, pData, ByteWidth, StructureByteStride, Usage,
+			D3D11_BIND_UNORDERED_ACCESS,
+			CPUAccessFlags, D3D11_RESOURCE_MISC_BUFFER_STRUCTURED)))
+			MessageBox(nullptr, L"CreateBuffer()  is failed", L"UnorderedAccessView::InitBuffer_UAV()", MB_ICONERROR);
+	}
+}
+
+void Buffer::InitBuffer_SRV(ID3D11Device* device, void* pData, UINT ByteWidth, UINT StructureByteStride, UINT CPUAccessFlags, D3D11_USAGE Usage)
+{
+	if (pData)
+	{
+		if (FAILED(InitBuffer(device, pData, ByteWidth, StructureByteStride, Usage,
+			D3D11_BIND_SHADER_RESOURCE,
+			CPUAccessFlags, D3D11_RESOURCE_MISC_BUFFER_STRUCTURED)))
+			MessageBox(nullptr, L"CreateBuffer() with pSysData is failed", L"UnorderedAccessView::InitBuffer_UAV()", MB_ICONERROR);
+	}
+	else
+	{
+		if (FAILED(InitBuffer(device, pData, ByteWidth, StructureByteStride, Usage,
+			D3D11_BIND_SHADER_RESOURCE,
+			CPUAccessFlags, D3D11_RESOURCE_MISC_BUFFER_STRUCTURED)))
+			MessageBox(nullptr, L"CreateBuffer()  is failed", L"UnorderedAccessView::InitBuffer_UAV()", MB_ICONERROR);
+	}
+}

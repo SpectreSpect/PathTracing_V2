@@ -60,28 +60,22 @@ TestingComputeShader::TestingComputeShader(ID3D11Device* device, std::vector<Obj
 	if (FAILED(device->CreateUnorderedAccessView(output_texture, &output_UAV_Desc, &output_UAV)))
 		MessageBox(nullptr, L"CreateUnorderedAccessView() for (output_UAV) is failed", L"TestingComputeShader::TestingComputeShader()", MB_ICONERROR);
 
-	InitRayGenerator(device, &ray_Buffer, &ray_UAV, &ray_SRV);
-	InitRayIntersector(device, &spherePrimetive_Buffer, &spherePrimetive_SRV, spheres);
+	InitRayGenerator(device, ray_Buffer, &ray_UAV, &ray_SRV);
+	InitRayIntersector(device, spherePrimetive_Buffer, &spherePrimetive_SRV, spheres);
 }
 
-void TestingComputeShader::InitRayGenerator(ID3D11Device* device, ID3D11Buffer** ray_Buffer, ID3D11UnorderedAccessView** ray_UAV, ID3D11ShaderResourceView** ray_SRV)
+void TestingComputeShader::InitRayGenerator(ID3D11Device* device, Buffer* ray_Buffer, ID3D11UnorderedAccessView** ray_UAV, ID3D11ShaderResourceView** ray_SRV)
 {
-	D3D11_BUFFER_DESC ray_Buffer_Desc{};
-	ray_Buffer_Desc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
-	ray_Buffer_Desc.CPUAccessFlags = 0;
-	ray_Buffer_Desc.Usage = D3D11_USAGE_DEFAULT;
-	ray_Buffer_Desc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-	ray_Buffer_Desc.StructureByteStride = sizeof(Ray);
-	ray_Buffer_Desc.ByteWidth = sizeof(Ray) * screenWidth * screenHeight;
-	if (FAILED(device->CreateBuffer(&ray_Buffer_Desc, 0, ray_Buffer)))
-		MessageBox(nullptr, L"CreateBuffer() for (ray_Buffer) is failed", L"TestingComputeShader::TestingComputeShader()", MB_ICONERROR);
-
+	ray_Buffer = new Buffer(device, nullptr, sizeof(Ray) * screenWidth * screenHeight, sizeof(Ray), 
+							D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE, 0,
+							D3D11_RESOURCE_MISC_BUFFER_STRUCTURED);
+					
 	D3D11_UNORDERED_ACCESS_VIEW_DESC ray_UAV_Desc{};
 	ray_UAV_Desc.Format = DXGI_FORMAT_UNKNOWN;
 	ray_UAV_Desc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
 	ray_UAV_Desc.Buffer.FirstElement = 0;
 	ray_UAV_Desc.Buffer.NumElements = screenWidth * screenHeight;
-	if (FAILED(device->CreateUnorderedAccessView(*ray_Buffer, &ray_UAV_Desc, ray_UAV)))
+	if (FAILED(device->CreateUnorderedAccessView(ray_Buffer->pBuf, &ray_UAV_Desc, ray_UAV)))
 		MessageBox(nullptr, L"CreateUnorderedAccessView() for (output_UAV) is failed", L"TestingComputeShader::TestingComputeShader()", MB_ICONERROR);
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC ray_SRV_Desc{};
@@ -91,13 +85,13 @@ void TestingComputeShader::InitRayGenerator(ID3D11Device* device, ID3D11Buffer**
 	ray_SRV_Desc.Buffer.ElementOffset = 0;
 	ray_SRV_Desc.Buffer.ElementWidth = sizeof(Ray);
 	ray_SRV_Desc.Buffer.NumElements = screenWidth * screenHeight;
-	if (FAILED(device->CreateShaderResourceView(*ray_Buffer, &ray_SRV_Desc, ray_SRV)))
+	if (FAILED(device->CreateShaderResourceView(ray_Buffer->pBuf, &ray_SRV_Desc, ray_SRV)))
 		MessageBox(nullptr, L"CreateShaderResourceView() for (ray_SRV) is failed", L"TestingComputeShader::InitRayGenerator()", MB_ICONERROR);
 
 	ray_ConstantBuffer = new ConstantBuffer(malloc(16 * 2), 16 * 2);
 }
 
-void TestingComputeShader::InitRayIntersector(ID3D11Device* device, ID3D11Buffer** spherePrimetive_Buffer, ID3D11ShaderResourceView** spherePrimetive_SRV, std::vector<Sphere_PT>& spheres)
+void TestingComputeShader::InitRayIntersector(ID3D11Device* device, Buffer* spherePrimetive_Buffer, ID3D11ShaderResourceView** spherePrimetive_SRV, std::vector<Sphere_PT>& spheres)
 {
 	Sphere_PT::SpherePrimitive* spherePrimetives = new Sphere_PT::SpherePrimitive[spheres.size()];
 	for (int i = 0; i < spheres.size(); i++)
@@ -106,18 +100,11 @@ void TestingComputeShader::InitRayIntersector(ID3D11Device* device, ID3D11Buffer
 		spherePrimetives[i].position = spheres[i].position;
 		spherePrimetives[i].radius = spheres[i].radius;
 	}
+	
 
-	D3D11_BUFFER_DESC spherePrimetive_Buffer_Desc{};
-	spherePrimetive_Buffer_Desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	spherePrimetive_Buffer_Desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	spherePrimetive_Buffer_Desc.Usage = D3D11_USAGE_DYNAMIC;
-	spherePrimetive_Buffer_Desc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-	spherePrimetive_Buffer_Desc.StructureByteStride = sizeof(Sphere_PT::SpherePrimitive);
-	spherePrimetive_Buffer_Desc.ByteWidth = sizeof(Sphere_PT::SpherePrimitive) * spheres.size();
-	D3D11_SUBRESOURCE_DATA subData{};
-	subData.pSysMem = spherePrimetives;
-	if (FAILED(device->CreateBuffer(&spherePrimetive_Buffer_Desc, &subData, spherePrimetive_Buffer)))
-		MessageBox(nullptr, L"CreateBuffer() for (spherePrimetive_Buffer) is failed", L"TestingComputeShader::InitRayIntersector()", MB_ICONERROR);
+	spherePrimetive_Buffer = new Buffer(device, spherePrimetives, sizeof(Sphere_PT::SpherePrimitive) * spheres.size(),
+								             sizeof(Sphere_PT::SpherePrimitive), D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, 
+											 D3D11_CPU_ACCESS_WRITE, D3D11_RESOURCE_MISC_BUFFER_STRUCTURED);
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC spherePrimetive_SRV_Desc{};
 	spherePrimetive_SRV_Desc.Format = DXGI_FORMAT_UNKNOWN;
@@ -126,7 +113,7 @@ void TestingComputeShader::InitRayIntersector(ID3D11Device* device, ID3D11Buffer
 	spherePrimetive_SRV_Desc.Buffer.ElementOffset = 0;
 	spherePrimetive_SRV_Desc.Buffer.ElementWidth = sizeof(Sphere_PT::SpherePrimitive);
 	spherePrimetive_SRV_Desc.Buffer.NumElements = spheres.size();
-	if (FAILED(device->CreateShaderResourceView(*spherePrimetive_Buffer, &spherePrimetive_SRV_Desc, spherePrimetive_SRV)))
+	if (FAILED(device->CreateShaderResourceView(spherePrimetive_Buffer->pBuf, &spherePrimetive_SRV_Desc, spherePrimetive_SRV)))
 		MessageBox(nullptr, L"CreateShaderResourceView() for (spherePrimetive_SRV) is failed", L"TestingComputeShader::InitRayIntersector()", MB_ICONERROR);
 }
 

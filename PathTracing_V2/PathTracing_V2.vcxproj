@@ -45,6 +45,7 @@
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Sphere_PT.cpp" />
+    <ClCompile Include="SRV.cpp" />
     <ClCompile Include="StructuredBuffer.cpp" />
     <ClCompile Include="TestingComputeShader.cpp" />
     <ClCompile Include="Timer.cpp" />
@@ -87,6 +88,7 @@
     <ClInclude Include="ShaderTexturing.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="Sphere_PT.h" />
+    <ClInclude Include="SRV.h" />
     <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="TestingComputeShader.h" />
     <ClInclude Include="Timer.h" />
