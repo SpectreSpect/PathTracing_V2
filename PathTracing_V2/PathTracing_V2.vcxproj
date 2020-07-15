@@ -48,6 +48,7 @@
     <ClCompile Include="SRV.cpp" />
     <ClCompile Include="StructuredBuffer.cpp" />
     <ClCompile Include="TestingComputeShader.cpp" />
+    <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="UnorderedAccessView.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
@@ -91,6 +92,7 @@
     <ClInclude Include="SRV.h" />
     <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="TestingComputeShader.h" />
+    <ClInclude Include="Texture2D.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="UnorderedAccessView.h" />
     <ClInclude Include="Vector4.h" />

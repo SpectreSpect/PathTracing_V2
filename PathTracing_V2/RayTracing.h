@@ -7,6 +7,7 @@
 #include "Vertex.h"
 #include "Timer.h"
 #include "Camera.h"
+#include "SRV.h"
 class RayTracing
 {
 public:
@@ -33,10 +34,12 @@ public:
 	ID3D11ShaderResourceView* shaderResourceView[2]; // 2 шейдер ресурса, для того, чтобы их можно было использовать как ресурс в шейдере
 	ID3D11UnorderedAccessView* pStructuredBufferUAV;
 
-	StructuredBuffer meshes;
-	StructuredBuffer vertices;
-	StructuredBuffer indices;
-
+	StructuredBuffer meshes_SB;
+	StructuredBuffer vertices_SB;
+	StructuredBuffer indices_SB;
+	SRV meshes_SRV;
+	SRV vertices_SRV;
+	SRV indices_SRV;
 	Shader* shaderRayTracing;
 	Shader* shaderTexturing;
 	BOOL textureQueue;

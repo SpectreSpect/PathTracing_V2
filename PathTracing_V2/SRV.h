@@ -1,6 +1,7 @@
 #pragma once
 #include <d3d11.h>
 #include "StructuredBuffer.h"
+#include "Texture2D.h"
 class SRV
 {
 public:

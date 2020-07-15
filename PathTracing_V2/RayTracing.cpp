@@ -68,22 +68,24 @@ void RayTracing::InitStructuredBuffer()
 	const unsigned int MeshObjectsCount = 1;
 	MeshObj meshObjects[MeshObjectsCount]
 	{ 0, figure->meshes[0].indexBuffer.indecesCount };
-	HCheck(meshes.Init_Test(DX::device, nullptr, sizeof(MeshObj), sizeof(MeshObj) * MeshObjectsCount, 
+	HCheck(meshes_SB.Init(DX::device, nullptr, sizeof(MeshObj), sizeof(MeshObj) * MeshObjectsCount,
 							D3D11_BIND_SHADER_RESOURCE, D3D11_CPU_ACCESS_WRITE, D3D11_USAGE_DYNAMIC), L"meshes.InitSBuffer() was failed", L"RayTracing");
 
-	HCheck(vertices.Init_Test(DX::device, nullptr, sizeof(Vertex), sizeof(Vertex) * figure->meshes[0].vertexBuffer.verticesCount, 
+	HCheck(vertices_SB.Init(DX::device, nullptr, sizeof(Vertex), sizeof(Vertex) * figure->meshes[0].vertexBuffer.verticesCount,
 							  D3D11_BIND_SHADER_RESOURCE, D3D11_CPU_ACCESS_WRITE, D3D11_USAGE_DYNAMIC),L"vertices.InitSBuffer() was failed", L"RayTracing" );
 
-	HCheck(indices.Init_Test(DX::device, nullptr, sizeof(int), sizeof(int) * figure->meshes[0].indexBuffer.indecesCount,
+	HCheck(indices_SB.Init(DX::device, nullptr, sizeof(int), sizeof(int) * figure->meshes[0].indexBuffer.indecesCount,
 							 D3D11_BIND_SHADER_RESOURCE, D3D11_CPU_ACCESS_WRITE, D3D11_USAGE_DYNAMIC), L"indices.InitSBuffer() was failed", L"RayTracing");
 
-	HCheck(meshes.UploadData(DX::deviceCon, meshObjects, sizeof(MeshObj) * MeshObjectsCount), L"meshes.UploadData() was failed", L"RayTracing");
-	HCheck(vertices.UploadData(DX::deviceCon, figure->meshes[0].vertexBuffer.pSysMem, sizeof(Vertex) * figure->meshes[0].vertexBuffer.verticesCount), L"vertices.UploadData was failed", L"RayTracing");
-	HCheck(indices.UploadData(DX::deviceCon, figure->meshes[0].indexBuffer.pSysMem, sizeof(int) * figure->meshes[0].indexBuffer.indecesCount), L"indices.UploadData() was failed", L"RayTracing");
+	HCheck(meshes_SB.UploadData(DX::deviceCon, meshObjects, sizeof(MeshObj) * MeshObjectsCount), L"meshes.UploadData() was failed", L"RayTracing");
+	HCheck(vertices_SB.UploadData(DX::deviceCon, figure->meshes[0].vertexBuffer.pSysMem, sizeof(Vertex) * figure->meshes[0].vertexBuffer.verticesCount), L"vertices.UploadData was failed", L"RayTracing");
+	HCheck(indices_SB.UploadData(DX::deviceCon, figure->meshes[0].indexBuffer.pSysMem, sizeof(int) * figure->meshes[0].indexBuffer.indecesCount), L"indices.UploadData() was failed", L"RayTracing");
 
-	HCheck(meshes.InitSBShaderResource(DX::device, sizeof(MeshObj), MeshObjectsCount), L"meshes.InitSBShaderResource() was failed", L"RayTracing");
-	HCheck(vertices.InitSBShaderResource(DX::device, sizeof(Vertex), figure->meshes[0].vertexBuffer.verticesCount), L"vertices.InitSBShaderResource() was failed", L"RayTracing");
-	HCheck(indices.InitSBShaderResource(DX::device, sizeof(int), figure->meshes[0].indexBuffer.indecesCount), L"indices.InitSBShaderResource() was failed", L"RayTracing");
+
+	HCheck(meshes_SRV.Init(DX::device, &meshes_SB), L"meshes_SRV.Init() was failed", L"RayTracing::InitStructuredBuffer()");
+	HCheck(vertices_SRV.Init(DX::device, &vertices_SB), L"vertices_SRV.Init() was failed", L"RayTracing::InitStructuredBuffer()");
+	HCheck(indices_SRV.Init(DX::device, &indices_SB), L"vertices_SRV.Init() was failed", L"RayTracing::InitStructuredBuffer()");
+
 }
 void RayTracing::InitShaderResource()
 {
@@ -387,9 +389,9 @@ void RayTracing::Draw()
 	DX::deviceCon->PSSetConstantBuffers(0, 1, &camera->cameraData_constBuf->pConstantBuffer);
 	UINT initCount = -1;
 	DX::deviceCon->PSSetShaderResources(0, 1, &shaderResourceView[!textureQueue]);
-	DX::deviceCon->PSSetShaderResources(50, 1, &meshes.pSBShaderResource);
-	DX::deviceCon->PSSetShaderResources(51, 1, &vertices.pSBShaderResource);
-	DX::deviceCon->PSSetShaderResources(52, 1, &indices.pSBShaderResource);
+	DX::deviceCon->PSSetShaderResources(50, 1, &meshes_SRV.pSRV);
+	DX::deviceCon->PSSetShaderResources(51, 1, &vertices_SRV.pSRV);
+	DX::deviceCon->PSSetShaderResources(52, 1, &indices_SRV.pSRV);
 
 
 	//Draw(shaderRayTracing);

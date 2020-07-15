@@ -2,13 +2,13 @@
 
 Buffer::Buffer()
 {
-	pBuf = nullptr;
+	pBuf_Temp = nullptr;
 }
 
 Buffer::~Buffer()
 {
-	if (pBuf)
-		pBuf->Release();
+	if (pBuf_Temp)
+		pBuf_Temp->Release();
 }
 
 Buffer::Buffer(ID3D11Device* device, void* pData, UINT ByteWidth, UINT StructureByteStride, D3D11_USAGE Usage, UINT BindFlags, UINT CPUAccessFlags, UINT MiscFlags)
@@ -28,8 +28,8 @@ Buffer::Buffer(ID3D11Device* device, void* pData, UINT ByteWidth, UINT Structure
 
 HRESULT Buffer::InitBuffer(ID3D11Device* device, void* pData, UINT ByteWidth, UINT StructureByteStride, D3D11_USAGE Usage, UINT BindFlags, UINT CPUAccessFlags, UINT MiscFlags)
 {
-	if (pBuf)
-		pBuf->Release();
+	if (pBuf_Temp)
+		pBuf_Temp->Release();
 	D3D11_BUFFER_DESC bufferDesc{};
 	bufferDesc.ByteWidth = ByteWidth;
 	bufferDesc.Usage = Usage;
@@ -41,11 +41,11 @@ HRESULT Buffer::InitBuffer(ID3D11Device* device, void* pData, UINT ByteWidth, UI
 	{
 		D3D11_SUBRESOURCE_DATA subData{};
 		subData.pSysMem = pData;
-		return device->CreateBuffer(&bufferDesc, &subData, &pBuf);
+		return device->CreateBuffer(&bufferDesc, &subData, &pBuf_Temp);
 	}
 	else
 	{
-		return device->CreateBuffer(&bufferDesc, 0, &pBuf);
+		return device->CreateBuffer(&bufferDesc, 0, &pBuf_Temp);
 	}
 }
 

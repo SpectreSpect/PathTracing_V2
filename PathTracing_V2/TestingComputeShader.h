@@ -7,6 +7,8 @@
 #include <vector>
 #include "Sphere_PT.h"
 #include "Buffer.h"
+#include "SRV.h"
+#include "Texture2D.h"
 class TestingComputeShader
 {
 public:
@@ -20,8 +22,8 @@ public:
 	ComputeShader* intersectionShader;
 	std::vector<Sphere_PT> spheres;
 
-	ID3D11Texture2D* output_texture;
-	ID3D11ShaderResourceView* output_SRV;
+	Texture2D output_texture;
+	SRV output_SRV;
 	ID3D11UnorderedAccessView* output_UAV;
 
 	struct Ray 
@@ -32,19 +34,18 @@ public:
 		float3 energy;
 		float3 result;
 	};
-	Buffer* ray_Buffer;
+	StructuredBuffer ray_SBuffer;
 	ID3D11UnorderedAccessView* ray_UAV;
-	ID3D11ShaderResourceView* ray_SRV;
+	SRV ray_SRV;
 	ConstantBuffer* ray_ConstantBuffer;
 
 
-	Buffer* spherePrimetive_Buffer;
-	//ID3D11Buffer* spherePrimetive_Buffer;
-	ID3D11ShaderResourceView* spherePrimetive_SRV;
+	StructuredBuffer spherePrimetive_SBuffer;
+	SRV spherePrimetive_SRV;
 
 private:
-	void InitRayGenerator(ID3D11Device* device, Buffer* ray_Buffer, ID3D11UnorderedAccessView** ray_UAV, ID3D11ShaderResourceView** ray_SRV);
-	void InitRayIntersector(ID3D11Device* device, Buffer* spherePrimetive_Buffer, ID3D11ShaderResourceView** spherePrimetive_SRV, std::vector<Sphere_PT>& spheres);
+	void InitRayGenerator(ID3D11Device* device, StructuredBuffer* ray_Buffer, ID3D11UnorderedAccessView** ray_UAV, SRV* ray_SRV);
+	void InitRayIntersector(ID3D11Device* device, StructuredBuffer* spherePrimetive_SBuffer, SRV* spherePrimetive_SRV, std::vector<Sphere_PT>& spheres);
 	void GenerateRays(ID3D11DeviceContext* deviceCon, ID3D11UnorderedAccessView** outPut_UAV, ID3D11UnorderedAccessView** ray_UAV, ConstantBuffer* ray_ConstantBuffer);
 	void IntersectPrimetives(ID3D11DeviceContext* deviceCon, ID3D11ShaderResourceView** spherePrimetive_SRV, ID3D11ShaderResourceView** ray_SRV, ID3D11UnorderedAccessView** output_UAV);
 	float screenWidth;
